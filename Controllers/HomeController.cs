@@ -26,5 +26,12 @@ namespace recruitment_website.Controllers
 
             return View();
         }
+
+        [AllowAnonymous]
+        public ActionResult AccessDenied()
+        {
+            Response.StatusCode = 403;
+            return View();
+        }
     }
 }

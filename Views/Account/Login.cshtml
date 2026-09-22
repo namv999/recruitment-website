@@ -1,0 +1,84 @@
+@model recruitment_website.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/auth.css" />
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card auth-card-login">
+        <div class="auth-header">
+            <div class="auth-icon-badge">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+            </div>
+            <h2 class="auth-title">Đăng nhập</h2>
+            <p class="auth-subtitle">Chào mừng bạn quay trở lại với hệ thống tuyển dụng</p>
+        </div>
+
+        @* Hiển thị ModelState error chung (không chỉ rõ email hay password sai để bảo mật tài khoản) *@
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null && ViewData.ModelState[string.Empty].Errors.Count > 0)
+        {
+            <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                </svg>
+                <div>
+                    @foreach (var error in ViewData.ModelState[string.Empty].Errors)
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "auth-form", role = "form", novalidate = "novalidate" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Email, "Địa chỉ Email", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" + (ViewData.ModelState["Email"] != null && ViewData.ModelState["Email"].Errors.Count > 0 ? " input-validation-error" : ""), placeholder = "name@example.com", type = "email", autocomplete = "email", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "field-validation-error" })
+            </div>
+
+            <div class="mb-4">
+                @Html.LabelFor(m => m.Password, "Mật khẩu", new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" + (ViewData.ModelState["Password"] != null && ViewData.ModelState["Password"].Errors.Count > 0 ? " input-validation-error" : ""), placeholder = "••••••••", autocomplete = "current-password" })
+                    <button class="btn btn-outline-secondary btn-password-toggle" type="button" title="Hiện mật khẩu">
+                        <svg class="icon-eye-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="icon-eye-hide d-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "field-validation-error" })
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-auth-submit w-100">
+                Đăng nhập
+            </button>
+        }
+
+        <div class="auth-footer-links">
+            Chưa có tài khoản?
+            <a href="@Url.Action("Register", "Account")">Đăng ký ngay</a>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Content/js/auth.js"></script>
+}
