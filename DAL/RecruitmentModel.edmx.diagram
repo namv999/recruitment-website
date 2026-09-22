@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a24c2f1177084179ad227ca3419abdfc" Name="Diagram1" ZoomLevel="25">
+        <EntityTypeShape EntityType="recruitment_dbModel.application_status_history" Width="1.5" PointX="3" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.applications" Width="1.5" PointX="7.5" PointY="26.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidate_educations" Width="1.5" PointX="5.25" PointY="23.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidate_experiences" Width="1.5" PointX="5.25" PointY="26.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidate_skills" Width="1.5" PointX="5.25" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidates" Width="1.5" PointX="3" PointY="20.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.companies" Width="1.5" PointX="6.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.company_members" Width="1.5" PointX="6" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.cvs" Width="1.5" PointX="5.25" PointY="33.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.job_categories" Width="1.5" PointX="6.75" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.job_skills" Width="1.5" PointX="11.25" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.jobs" Width="1.5" PointX="9" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.saved_jobs" Width="1.5" PointX="8.25" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skill_aliases" Width="1.5" PointX="11.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skill_categories" Width="1.5" PointX="6.75" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skills" Width="1.5" PointX="9" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.users" Width="1.5" PointX="0.75" PointY="18.25" IsExpanded="true" />
+        <AssociationConnector Association="recruitment_dbModel.FK__applicati__appli__339FAB6E" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__applicati__chang__3493CFA7" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__applicati__candi__2EDAF651" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__applicati__cv_id__2FCF1A8A" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__applicati__job_i__2DE6D218" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__candidate__candi__7D439ABD" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__candidate__candi__797309D9" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__candidate__candi__75A278F5" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__candidate__skill__76969D2E" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__candidate__user___6FE99F9F" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__cvs__candidate_i__02084FDA" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__saved_job__candi__3864608B" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__company_m__compa__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__jobs__company_id__18EBB532" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__company_m__user___5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__jobs__category_i__1AD3FDA4" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__job_skill__job_i__25518C17" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__job_skill__skill__2645B050" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__jobs__posted_by__19DFD96B" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__saved_job__job_i__395884C4" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__skill_ali__skill__66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="recruitment_dbModel.FK__skills__category__628FA481" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

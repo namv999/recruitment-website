@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -45,10 +46,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -134,6 +143,75 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\applications.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\application_status_history.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\candidates.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\candidate_educations.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\candidate_experiences.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\candidate_skills.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\companies.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\company_members.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\cvs.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\jobs.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\job_categories.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\job_skills.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\RecruitmentModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecruitmentModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\RecruitmentModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\RecruitmentModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecruitmentModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\saved_jobs.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\skills.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\skill_aliases.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\skill_categories.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\sysdiagrams.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\users.cs">
+      <DependentUpon>RecruitmentModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -156,6 +234,16 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="DAL\RecruitmentModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RecruitmentModel.edmx</DependentUpon>
+      <LastGenOutput>RecruitmentModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="DAL\RecruitmentModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RecruitmentModel.edmx</DependentUpon>
+      <LastGenOutput>RecruitmentModel.cs</LastGenOutput>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -165,6 +253,15 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="DAL\RecruitmentModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RecruitmentModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="DAL\RecruitmentModel.edmx.diagram">
+      <DependentUpon>RecruitmentModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="ConnectionStrings.config" />
+    <None Include="ConnectionStrings.config.example" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -222,6 +319,9 @@
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -257,7 +357,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\EntityFramework.6.5.2\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.2\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('packages\EntityFramework.6.5.2\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\EntityFramework.6.5.2\build\EntityFramework.targets'))" />
   </Target>
+  <Import Project="packages\EntityFramework.6.5.2\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.5.2\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

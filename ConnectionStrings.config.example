@@ -1,0 +1,6 @@
+﻿<?xml version="1.0"?>
+<configuration>
+	<connectionStrings configSource="ConnectionStrings.config">
+		<add name="recruitment_dbEntities" connectionString="metadata=res://*/DAL.RecruitmentModel.csdl|res://*/DAL.RecruitmentModel.ssdl|res://*/DAL.RecruitmentModel.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=YOUR_SERVER_NAME;initial catalog=recruitment_db;integrated security=True;trustservercertificate=True;MultipleActiveResultSets=True;App=EntityFramework&quot;" providerName="System.Data.EntityClient" />
+	</connectionStrings>
+</configuration>
