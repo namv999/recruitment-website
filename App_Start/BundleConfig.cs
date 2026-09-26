@@ -20,15 +20,20 @@ namespace recruitment_website
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+                      "~/Scripts/bootstrap.bundle.js"));
 
+            // Global Site Stylesheet (Bootstrap 5 + Design System site.css)
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css",
-                      "~/Content/css/auth.css"));
+                      "~/Content/css/site.css"));
 
+            // Global Site Scripts
+            bundles.Add(new ScriptBundle("~/bundles/site").Include(
+                      "~/Scripts/site.js"));
+
+            // Module: Auth Script
             bundles.Add(new ScriptBundle("~/bundles/auth").Include(
-                      "~/Content/js/auth.js"));
+                      "~/Scripts/auth/auth.js"));
         }
     }
 }

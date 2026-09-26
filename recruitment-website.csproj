@@ -311,8 +311,18 @@
     <Content Include="Views\Home\AccessDenied.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Content\css\auth.css" />
-    <Content Include="Content\js\auth.js" />
+    <Content Include="Content\css\site.css" />
+    <Content Include="Content\css\auth\auth.css" />
+    <Content Include="Content\css\company\company.css" />
+    <Content Include="Content\css\job\job.css" />
+    <Content Include="Content\css\candidate\candidate.css" />
+    <Content Include="Content\css\application\application.css" />
+    <Content Include="Scripts\site.js" />
+    <Content Include="Scripts\auth\auth.js" />
+    <Content Include="Scripts\company\company.js" />
+    <Content Include="Scripts\job\job.js" />
+    <Content Include="Scripts\candidate\candidate.js" />
+    <Content Include="Scripts\application\application.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
