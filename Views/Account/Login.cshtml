@@ -2,10 +2,11 @@
 
 @{
     ViewBag.Title = "Đăng nhập";
+    ViewBag.HideGlobalAlert = true;
 }
 
 @section styles {
-    <link rel="stylesheet" href="~/Content/css/auth/auth.css" />
+    @Styles.Render("~/bundles/auth-css")
 }
 
 <div class="auth-wrapper">
@@ -21,6 +22,24 @@
             <h2 class="auth-title">Đăng nhập</h2>
             <p class="auth-subtitle">Chào mừng bạn quay trở lại với hệ thống tuyển dụng</p>
         </div>
+
+        @* Hiển thị thông báo khi đăng ký tài khoản thành công *@
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success d-flex align-items-start gap-3 mb-4 p-3 rounded-3 shadow-sm border border-success border-opacity-25 bg-success bg-opacity-10 text-success-emphasis" role="alert">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 28px; height: 28px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                        <strong class="text-success" style="font-size: 0.95rem;">Đăng ký tài khoản thành công!</strong>
+                    </div>
+                    <div class="text-dark opacity-75 small">@TempData["Success"]</div>
+                </div>
+            </div>
+        }
 
         @* Hiển thị ModelState error chung (không chỉ rõ email hay password sai để bảo mật tài khoản) *@
         @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null && ViewData.ModelState[string.Empty].Errors.Count > 0)

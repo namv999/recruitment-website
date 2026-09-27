@@ -209,7 +209,7 @@
 
         <!-- FLASH NOTIFICATIONS (TempData) -->
         <div class="container flash-alert-container mt-3">
-            @if (TempData["Success"] != null)
+            @if (TempData["Success"] != null && ViewBag.HideGlobalAlert != true)
             {
                 <div class="flash-alert flash-alert-success" data-auto-dismiss="true" role="alert">
                     <div class="flash-alert-content">

@@ -1,4 +1,4 @@
-﻿using recruitment_website.DAL;
+using recruitment_website.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,6 +159,7 @@ namespace recruitment_website.Controllers
                 }
             }
 
+            TempData["Success"] = "Vui lòng đăng nhập lại để tiếp tục.";
             return RedirectToAction("Login");
         }
     }

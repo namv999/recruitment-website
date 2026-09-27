@@ -254,6 +254,62 @@
     }
 }
 
+/* Success notification & Badge inside Auth Card */
+.auth-alert-success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(22, 163, 74, 0.08);
+    animation: fadeInSlideDown 0.3s ease-out;
+}
+
+.auth-alert-success .auth-alert-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #dcfce7;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+}
+
+.auth-alert-success .auth-alert-text {
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+.auth-alert-success .auth-badge-success {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.auth-alert-success .auth-alert-title {
+    font-size: 0.95rem;
+    color: #166534;
+}
+
+.auth-alert-success .auth-alert-desc {
+    color: #15803d;
+    font-size: 0.875rem;
+}
+
 /* Validation styling */
 .field-validation-error {
     display: block;

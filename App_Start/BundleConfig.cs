@@ -31,6 +31,10 @@ namespace recruitment_website
             bundles.Add(new ScriptBundle("~/bundles/site").Include(
                       "~/Scripts/site.js"));
 
+            // Module: Auth Stylesheet
+            bundles.Add(new StyleBundle("~/bundles/auth-css").Include(
+                      "~/Content/css/auth/auth.css"));
+
             // Module: Auth Script
             bundles.Add(new ScriptBundle("~/bundles/auth").Include(
                       "~/Scripts/auth/auth.js"));
