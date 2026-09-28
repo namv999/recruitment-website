@@ -1,0 +1,83 @@
+﻿@using DoAnLapTrinhWeb.Models
+@model List<Job>
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<div class="p-5 mb-4 rounded-4 text-white" style="background:linear-gradient(120deg,#1e3a8a,#1d4ed8 60%,#3b82f6);">
+    <h1 class="fw-bold">Tìm công việc mơ ước của bạn</h1>
+    <p class="lead mb-4">Hàng ngàn tin tuyển dụng từ các công ty uy tín, cập nhật mỗi ngày.</p>
+    <form class="d-flex bg-white rounded-3 p-2" method="get" action="@Url.Action("DanhSachJob", "TuyenDung")">
+        <input class="form-control border-0" type="search" name="key" placeholder="Vị trí, kỹ năng, tên công ty...">
+        <button class="btn btn-accent px-4" type="submit"><i class="fa-solid fa-magnifying-glass me-1"></i>Tìm việc</button>
+    </form>
+</div>
+
+<div class="row text-center mb-5 g-3">
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fa-solid fa-briefcase fa-2x text-primary mb-2"></i>
+            <h3 class="fw-bold mb-0">@ViewBag.TongSoJob</h3>
+            <small class="text-muted">Tin tuyển dụng đang mở</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fa-solid fa-building fa-2x text-primary mb-2"></i>
+            <h3 class="fw-bold mb-0">@ViewBag.TongSoCongTy</h3>
+            <small class="text-muted">Công ty đã xác thực</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fa-solid fa-users fa-2x text-primary mb-2"></i>
+            <h3 class="fw-bold mb-0">@ViewBag.TongSoUngVien</h3>
+            <small class="text-muted">Ứng viên trên hệ thống</small>
+        </div>
+    </div>
+</div>
+
+<h5 class="section-title">Ngành nghề nổi bật</h5>
+@Html.Partial("_MenuDanhMuc", (List<JobCategory>)ViewBag.DsDanhMuc)
+
+<div class="d-flex justify-content-between align-items-center">
+    <h5 class="section-title mb-0">Việc làm mới nhất</h5>
+    <a class="btn btn-outline-primary btn-sm" href="@Url.Action("DanhSachJob", "TuyenDung")">Xem tất cả <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+
+<div class="row g-4 mt-1">
+    @if (Model.Count == 0)
+    {
+        <p class="text-muted">Hiện chưa có tin tuyển dụng nào.</p>
+    }
+    @foreach (Job j in Model)
+    {
+        <div class="col-md-6 col-lg-3">
+            <div class="card card-job p-3">
+                <div class="d-flex align-items-center mb-2">
+                    <img class="company-logo me-2" src="@j.CompanyLogo" onerror="this.src='https://via.placeholder.com/56?text=Logo'" alt="@j.CompanyName" />
+                    <div>
+                        <div class="fw-semibold text-truncate" style="max-width:160px;">@j.CompanyName</div>
+                        <small class="text-muted">@j.City</small>
+                    </div>
+                </div>
+                <a href="@Url.Action("ChiTietJob", "TuyenDung", new { id = j.Id })" class="fw-bold text-decoration-none stretched-link">@j.Title</a>
+                <div class="mt-2">
+                    <span class="badge bg-light text-dark border">@j.Level</span>
+                    <span class="badge bg-light text-dark border">@j.WorkMode</span>
+                </div>
+                <div class="text-danger fw-semibold mt-2">
+                    @if (j.SalaryNegotiable)
+                    {
+                        <span>Thoả thuận</span>
+                    }
+                    else
+                    {
+                        <span>@j.SalaryMin - @j.SalaryMax @j.Currency</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

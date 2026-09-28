@@ -1,0 +1,75 @@
+﻿@using DoAnLapTrinhWeb.Models
+@model List<Job>
+@{
+    ViewBag.Title = "Danh sách việc làm";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<h5 class="section-title">Danh mục nghề</h5>
+@Html.Partial("_MenuDanhMuc", (List<JobCategory>)ViewBag.DsDanhMuc)
+
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="bg-white rounded-4 shadow-sm p-3">
+            <h6 class="fw-bold mb-3"><i class="fa-solid fa-filter me-1"></i> Bộ lọc</h6>
+            <form method="get" action="@Url.Action("DanhSachJob", "TuyenDung")">
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Từ khóa</label>
+                    <input class="form-control form-control-sm" type="text" name="key" value="@ViewBag.Key" placeholder="Vị trí, công ty..." />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-muted">Thành phố</label>
+                    <select class="form-select form-select-sm" name="city">
+                        <option value="">-- Tất cả --</option>
+                        @foreach (string tp in (List<string>)ViewBag.DsThanhPho)
+                        {
+                            <option value="@tp" selected="@(tp == ViewBag.City ? "selected" : null)">@tp</option>
+                        }
+                    </select>
+                </div>
+                <input type="hidden" name="madm" value="@ViewBag.Madm" />
+                <button class="btn btn-primary btn-sm w-100" type="submit">Áp dụng</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Tìm thấy <span class="text-primary">@Model.Count</span> việc làm</h5>
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <div class="alert alert-warning">Không tìm thấy tin tuyển dụng phù hợp. Hãy thử từ khóa khác.</div>
+        }
+
+        @foreach (Job j in Model)
+        {
+            <div class="card card-job p-3 mb-3">
+                <div class="d-flex">
+                    <img class="company-logo me-3" src="@j.CompanyLogo" onerror="this.src='https://via.placeholder.com/56?text=Logo'" alt="@j.CompanyName" />
+                    <div class="flex-grow-1">
+                        <a href="@Url.Action("ChiTietJob", "TuyenDung", new { id = j.Id })" class="fw-bold fs-5 text-decoration-none">@j.Title</a>
+                        <div class="text-muted small">
+                            <i class="fa-solid fa-building me-1"></i>@j.CompanyName
+                            <span class="mx-2">|</span>
+                            <i class="fa-solid fa-location-dot me-1"></i>@j.City
+                        </div>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark border">@j.CategoryName</span>
+                            <span class="badge bg-light text-dark border">@j.Level</span>
+                            <span class="badge bg-light text-dark border">@j.EmploymentType</span>
+                            <span class="badge bg-light text-dark border">@j.WorkMode</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-danger fw-semibold">
+                            @(j.SalaryNegotiable ? "Thoả thuận" : j.SalaryMin + " - " + j.SalaryMax + " " + j.Currency)
+                        </div>
+                        <a class="btn btn-accent btn-sm mt-2" href="@Url.Action("ChiTietJob", "TuyenDung", new { id = j.Id })">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

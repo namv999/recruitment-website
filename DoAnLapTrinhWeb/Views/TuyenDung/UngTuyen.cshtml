@@ -1,0 +1,82 @@
+﻿@using DoAnLapTrinhWeb.Models
+@model Job
+@{
+    ViewBag.Title = "Ứng tuyển - " + Model.Title;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<CV> dsCV = (List<CV>)ViewBag.DsCV;
+    bool daUngTuyen = (bool)ViewBag.DaUngTuyen;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-3">
+            <div class="d-flex align-items-center">
+                <img class="company-logo me-3" src="@Model.CompanyLogo" onerror="this.src='https://via.placeholder.com/56?text=Logo'" />
+                <div>
+                    <h5 class="fw-bold mb-0">@Model.Title</h5>
+                    <div class="small text-muted">@Model.CompanyName &middot; @Model.City</div>
+                </div>
+            </div>
+        </div>
+
+        @if (TempData["LoiUngTuyen"] != null)
+        {
+            <div class="alert alert-danger">@TempData["LoiUngTuyen"]</div>
+        }
+
+        @if (daUngTuyen)
+        {
+            <div class="alert alert-info">
+                <i class="fa-solid fa-circle-info me-1"></i>Bạn đã ứng tuyển vào vị trí này rồi.
+                <a href="@Url.Action("TrangThaiUngTuyen", "TuyenDung", new { ungvien = ViewBag.MaUngVien })">Xem trạng thái đơn ứng tuyển</a>.
+            </div>
+        }
+        else
+        {
+            <div class="bg-white rounded-4 shadow-sm p-4">
+                <h5 class="section-title">Nộp đơn ứng tuyển</h5>
+
+                @* enctype bắt buộc phải multipart/form-data để gửi được file *@
+                using (Html.BeginForm("UngTuyen", "TuyenDung", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="jobId" value="@Model.Id" />
+                    <input type="hidden" name="ungvien" value="@ViewBag.MaUngVien" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="fa-solid fa-file-arrow-up me-1"></i>Tải lên CV mới (PDF hoặc Word .docx)
+                        </label>
+                        <input class="form-control" type="file" name="cvFile" accept=".pdf,.docx" />
+                        <small class="text-muted">Hệ thống sẽ tự đọc nội dung CV và gợi ý kỹ năng phù hợp cho hồ sơ của bạn.</small>
+                    </div>
+
+                    @if (dsCV.Count > 0)
+                    {
+                        <div class="text-center text-muted small my-2">— hoặc —</div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Dùng lại CV đã có trong hồ sơ</label>
+                            <select class="form-select" name="cvIdCoSan">
+                                <option value="">-- Không chọn --</option>
+                                @foreach (CV cv in dsCV)
+                                {
+                                    <option value="@cv.Id" selected="@(cv.IsDefault ? "selected" : null)">@cv.Title</option>
+                                }
+                            </select>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Thư xin việc (không bắt buộc)</label>
+                        <textarea class="form-control" name="coverLetter" rows="5" placeholder="Giới thiệu ngắn gọn vì sao bạn phù hợp với vị trí này..."></textarea>
+                    </div>
+
+                    <button class="btn btn-accent w-100" type="submit">
+                        <i class="fa-solid fa-paper-plane me-1"></i>Gửi đơn ứng tuyển
+                    </button>
+                
+            </div>
+        }
+    </div>
+</div>

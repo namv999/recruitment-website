@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - TuyenDung365</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --td-primary: #1d4ed8;
+            --td-primary-dark: #1e3a8a;
+            --td-accent: #f97316;
+            --td-bg: #f4f6fb;
+        }
+
+        body {
+            background-color: var(--td-bg);
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            color: #1f2937;
+        }
+
+        .navbar-td {
+            background: linear-gradient(90deg, var(--td-primary-dark), var(--td-primary));
+        }
+
+        .navbar-td .navbar-brand {
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        .navbar-td .nav-link {
+            color: rgba(255,255,255,.85) !important;
+        }
+
+        .navbar-td .nav-link:hover {
+            color: #fff !important;
+        }
+
+        .btn-accent {
+            background-color: var(--td-accent);
+            border-color: var(--td-accent);
+            color: #fff;
+        }
+
+        .btn-accent:hover {
+            background-color: #ea6a0c;
+            border-color: #ea6a0c;
+            color: #fff;
+        }
+
+        .card-job {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            transition: box-shadow .2s ease, transform .2s ease;
+            height: 100%;
+        }
+
+        .card-job:hover {
+            box-shadow: 0 10px 24px rgba(29,78,216,.12);
+            transform: translateY(-3px);
+        }
+
+        .company-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            padding: 4px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            border-left: 5px solid var(--td-accent);
+            padding-left: 12px;
+            margin-bottom: 1.25rem;
+        }
+
+        footer.td-footer {
+            background-color: #111827;
+            color: #d1d5db;
+        }
+
+        .badge-status {
+            font-weight: 600;
+            padding: .5em .8em;
+        }
+    </style>
+    @RenderSection("styles", required: false)
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-td navbar-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("TrangChu", "TuyenDung")">
+                <i class="fa-solid fa-briefcase me-1"></i> TuyenDung<span class="text-warning">365</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("TrangChu", "TuyenDung")">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("DanhSachJob", "TuyenDung")">Việc làm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("UngVien", "TuyenDung", new { id = 1 })">Hồ sơ của tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("TrangThaiUngTuyen", "TuyenDung", new { ungvien = 1 })">Đơn ứng tuyển</a></li>
+                </ul>
+                <form class="d-flex" method="get" action="@Url.Action("DanhSachJob", "TuyenDung")">
+                    <input class="form-control form-control-sm me-2" type="search" name="key" placeholder="Tìm việc làm, công ty..." style="min-width:220px;">
+                    <button class="btn btn-accent btn-sm" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        @RenderBody()
+    </div>
+
+    <footer class="td-footer mt-5 py-4">
+        <div class="container d-flex flex-wrap justify-content-between">
+            <div>
+                <h5 class="text-white"><i class="fa-solid fa-briefcase me-1"></i> TuyenDung365</h5>
+                <small>Đồ án lập trình Web &mdash; Mô hình MVC (.NET Framework)</small>
+            </div>
+            <div class="text-end small">
+                &copy; @DateTime.Now.Year &middot; Nền tảng kết nối Ứng viên &amp; Nhà tuyển dụng
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

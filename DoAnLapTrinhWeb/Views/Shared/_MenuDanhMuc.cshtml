@@ -1,0 +1,17 @@
+﻿@using DoAnLapTrinhWeb.Models
+@model List<JobCategory>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a class="btn btn-sm @(ViewBag.Madm == null ? "btn-primary" : "btn-outline-primary")"
+       href="@Url.Action("DanhSachJob", "TuyenDung")">
+        Tất cả ngành nghề
+    </a>
+    @foreach (JobCategory dm in Model)
+    {
+        bool active = ViewBag.Madm != null && (int)ViewBag.Madm == dm.Id;
+        <a class="btn btn-sm @(active ? "btn-primary" : "btn-outline-primary")"
+           href="@Url.Action("DanhSachJob", "TuyenDung", new { madm = dm.Id })">
+            @dm.Name
+        </a>
+    }
+</div>

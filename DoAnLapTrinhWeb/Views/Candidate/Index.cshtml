@@ -1,0 +1,63 @@
+@using DoAnLapTrinhWeb.Models
+@model List<Candidate>
+@{
+    ViewBag.Title = "Danh sách ứng viên";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<h5 class="section-title">Danh sách ứng viên (@Model.Count)</h5>
+
+<div class="bg-white rounded-4 shadow-sm p-3 mb-3">
+    <form class="d-flex" method="get" action="@Url.Action("Index")">
+        <input class="form-control me-2" type="search" name="key" value="@ViewBag.Key" placeholder="Tìm theo tên hoặc chức danh..." />
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+</div>
+
+<div class="bg-white rounded-4 shadow-sm p-3">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr class="text-muted small">
+                    <th>Họ tên</th>
+                    <th>Chức danh</th>
+                    <th>Thành phố</th>
+                    <th>Kinh nghiệm</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Candidate uv in Model)
+                {
+                    <tr>
+                        <td>
+                            <a class="fw-semibold text-decoration-none" href="@Url.Action("Details", new { id = uv.Id })">@uv.FullName</a>
+                        </td>
+                        <td class="text-muted small">@uv.Headline</td>
+                        <td>@uv.City</td>
+                        <td>@uv.TotalExperienceYears năm</td>
+                        <td>
+                            @if (uv.OpenToWork)
+                            {
+                                <span class="badge bg-success">Đang mở tìm việc</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-dark border">Không tìm việc</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Details", new { id = uv.Id })">Xem</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Edit", new { id = uv.Id })"><i class="fa-solid fa-pen"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Count == 0)
+        {
+            <p class="text-muted text-center my-3 mb-0">Không tìm thấy ứng viên phù hợp.</p>
+        }
+    </div>
+</div>

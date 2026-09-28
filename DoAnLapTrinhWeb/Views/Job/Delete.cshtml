@@ -1,0 +1,38 @@
+@using DoAnLapTrinhWeb.Models
+@model Job
+@{
+    ViewBag.Title = "Xoá tin: " + Model.Title;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h5 class="section-title text-danger">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i>Xác nhận xoá tin tuyển dụng
+            </h5>
+
+            <p>Bạn có chắc muốn xoá tin tuyển dụng dưới đây? Hành động này không thể hoàn tác.</p>
+
+            <div class="d-flex align-items-center border rounded-3 p-3 mb-3">
+                <img class="company-logo me-3" src="@Model.CompanyLogo" onerror="this.src='https://via.placeholder.com/56?text=Logo'" />
+                <div>
+                    <div class="fw-bold">@Model.Title</div>
+                    <div class="small text-muted">
+                        @Model.CompanyName &middot; @Model.City &middot;
+                        <span class="badge bg-light text-dark border">@Model.Status</span>
+                    </div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("Delete", "Job", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <button class="btn btn-danger px-4" type="submit"><i class="fa-solid fa-trash me-1"></i>Xoá tin này</button>
+                <a class="btn btn-outline-secondary px-4" href="@Url.Action("Details", new { id = Model.Id })">Huỷ</a>
+            }
+        </div>
+    </div>
+</div>

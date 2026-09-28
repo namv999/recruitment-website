@@ -1,0 +1,86 @@
+@using DoAnLapTrinhWeb.Models
+@model Job
+@{
+    ViewBag.Title = "Chi tiết tin: " + Model.Title;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<Skill> dsKyNang = (List<Skill>)ViewBag.DsKyNangYeuCau;
+}
+
+<div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start">
+        <div class="d-flex">
+            <img class="company-logo me-3" style="width:72px;height:72px;" src="@Model.CompanyLogo" onerror="this.src='https://via.placeholder.com/72?text=Logo'" />
+            <div>
+                <h2 class="fw-bold mb-1">@Model.Title</h2>
+                <div class="text-muted">
+                    <i class="fa-solid fa-building me-1"></i>@Model.CompanyName
+                    <span class="mx-2">|</span>
+                    <i class="fa-solid fa-location-dot me-1"></i>@Model.City &middot; @Model.Address
+                </div>
+            </div>
+        </div>
+        <div class="text-end mt-3 mt-md-0">
+            <span class="badge bg-light text-dark border mb-2">@Model.Status</span><br />
+            <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+                <i class="fa-solid fa-pen me-1"></i>Sửa
+            </a>
+            <a class="btn btn-outline-danger btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
+                <i class="fa-solid fa-trash me-1"></i>Xoá
+            </a>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <span class="badge bg-primary-subtle text-primary border">@Model.CategoryName</span>
+        <span class="badge bg-primary-subtle text-primary border">@Model.Level</span>
+        <span class="badge bg-primary-subtle text-primary border">@Model.EmploymentType</span>
+        <span class="badge bg-primary-subtle text-primary border">@Model.WorkMode</span>
+        <span class="badge bg-primary-subtle text-primary border">Cần @Model.Headcount người</span>
+        <span class="badge bg-light text-dark border"><i class="fa-regular fa-eye me-1"></i>@Model.ViewCount lượt xem</span>
+    </div>
+
+    <div class="text-danger fw-semibold fs-4 mt-3">
+        @(Model.SalaryNegotiable ? "Thoả thuận" : Model.SalaryMin + " - " + Model.SalaryMax + " " + Model.Currency)
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+            <h5 class="section-title">Mô tả công việc</h5>
+            <p style="white-space:pre-line">@Model.Description</p>
+
+            <h5 class="section-title">Yêu cầu ứng viên</h5>
+            <p style="white-space:pre-line">@Model.Requirements</p>
+            <ul class="small text-muted">
+                <li>Kinh nghiệm tối thiểu: @Model.MinExperienceYears năm</li>
+                <li>Trình độ học vấn: @Model.MinEducation</li>
+            </ul>
+
+            <h5 class="section-title">Quyền lợi</h5>
+            <p style="white-space:pre-line">@Model.Benefits</p>
+
+            @if (dsKyNang != null && dsKyNang.Count > 0)
+            {
+                <h5 class="section-title">Kỹ năng yêu cầu</h5>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    @foreach (Skill sk in dsKyNang)
+                    {
+                        <span class="badge bg-secondary">@sk.Name</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h6 class="fw-bold">Thông tin công ty</h6>
+            <img class="company-logo mb-2" src="@Model.CompanyLogo" onerror="this.src='https://via.placeholder.com/56?text=Logo'" />
+            <div class="fw-semibold">@Model.CompanyName</div>
+            <a class="btn btn-outline-primary btn-sm mt-3 w-100" href="@Url.Action("Details", "Company", new { id = Model.CompanyId })">
+                Xem trang công ty
+            </a>
+        </div>
+    </div>
+</div>

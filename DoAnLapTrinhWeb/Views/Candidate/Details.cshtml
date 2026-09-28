@@ -1,0 +1,124 @@
+@using DoAnLapTrinhWeb.Models
+@model Candidate
+@{
+    ViewBag.Title = Model.FullName;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<CV> dsCV = (List<CV>)ViewBag.DsCV;
+    List<CandidateExperience> dsKN = (List<CandidateExperience>)ViewBag.DsKinhNghiem;
+    List<CandidateEducation> dsHV = (List<CandidateEducation>)ViewBag.DsHocVan;
+    List<Skill> dsKyNang = (List<Skill>)ViewBag.DsKyNang;
+}
+
+<a class="small text-decoration-none d-inline-block mb-3" href="@Url.Action("Index")">
+    <i class="fa-solid fa-arrow-left me-1"></i>Quay lại danh sách ứng viên
+</a>
+
+<div class="bg-white rounded-4 shadow-sm p-4 mb-4 d-flex flex-wrap justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+             style="width:72px;height:72px;font-size:28px;">
+            @Model.FullName.Substring(0, 1)
+        </div>
+        <div>
+            <h3 class="fw-bold mb-0">@Model.FullName</h3>
+            <div class="text-muted">@Model.Headline</div>
+            <div class="small text-muted"><i class="fa-solid fa-location-dot me-1"></i>@Model.City</div>
+        </div>
+    </div>
+    <div class="text-end">
+        @if (Model.OpenToWork)
+        {
+            <span class="badge bg-success mb-2">Đang mở tìm việc</span>
+        }
+        <br />
+        <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+            <i class="fa-solid fa-pen me-1"></i>Sửa
+        </a>
+        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("TrangThaiUngTuyen", "TuyenDung", new { ungvien = Model.Id })">
+            Xem đơn ứng tuyển
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+            <h5 class="section-title">Giới thiệu bản thân</h5>
+            <p style="white-space:pre-line">@Model.Summary</p>
+        </div>
+
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+            <h5 class="section-title">Kinh nghiệm làm việc</h5>
+            @foreach (CandidateExperience kn in dsKN)
+            {
+                <div class="mb-3 pb-3 border-bottom">
+                    <div class="fw-semibold">@kn.JobTitle &middot; @kn.CompanyName</div>
+                    <div class="small text-muted">
+                        @kn.StartDate.ToString("MM/yyyy") - @(kn.EndDate.HasValue ? kn.EndDate.Value.ToString("MM/yyyy") : "Hiện tại")
+                    </div>
+                    <p class="mt-1 mb-0" style="white-space:pre-line">@kn.Description</p>
+                </div>
+            }
+            @if (dsKN.Count == 0)
+            {
+                <p class="text-muted small">Chưa cập nhật kinh nghiệm làm việc.</p>
+            }
+        </div>
+
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h5 class="section-title">Học vấn</h5>
+            @foreach (CandidateEducation hv in dsHV)
+            {
+                <div class="mb-2">
+                    <div class="fw-semibold">@hv.SchoolName</div>
+                    <div class="small text-muted">@hv.Degree &middot; @hv.Major &middot; @hv.StartYear - @hv.EndYear</div>
+                </div>
+            }
+            @if (dsHV.Count == 0)
+            {
+                <p class="text-muted small">Chưa cập nhật học vấn.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+            <h6 class="fw-bold mb-2">Kỹ năng</h6>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (Skill sk in dsKyNang)
+                {
+                    <span class="badge bg-secondary">@sk.Name</span>
+                }
+            </div>
+            <hr />
+            <div class="small text-muted">Tổng kinh nghiệm: <b>@Model.TotalExperienceYears năm</b></div>
+            <div class="small text-muted">Trình độ cao nhất: <b>@Model.HighestEducation</b></div>
+            @if (Model.ExpectedSalary.HasValue)
+            {
+                <div class="small text-muted">Mức lương mong muốn: <b>@Model.ExpectedSalary.Value.ToString("N0") đ</b></div>
+            }
+        </div>
+
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h6 class="fw-bold mb-3">CV (@dsCV.Count)</h6>
+            @foreach (CV cv in dsCV)
+            {
+                <a class="d-flex align-items-center text-decoration-none mb-2 pb-2 border-bottom"
+                   href="@Url.Action("CV", "TuyenDung", new { id = cv.Id })">
+                    <i class="fa-solid fa-file-lines text-primary me-2 fs-5"></i>
+                    <div>
+                        <div class="fw-semibold">@cv.Title</div>
+                        @if (cv.IsDefault)
+                        {
+                            <span class="badge bg-light text-dark border">Mặc định</span>
+                        }
+                    </div>
+                </a>
+            }
+            @if (dsCV.Count == 0)
+            {
+                <p class="text-muted small">Chưa có CV nào được tải lên.</p>
+            }
+        </div>
+    </div>
+</div>

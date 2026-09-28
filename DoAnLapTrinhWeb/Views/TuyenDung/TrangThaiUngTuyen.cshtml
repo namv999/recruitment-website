@@ -1,0 +1,100 @@
+﻿@using DoAnLapTrinhWeb.Models
+@model List<Application>
+@{
+    ViewBag.Title = "Trạng thái ứng tuyển";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<Job> dsJob = (List<Job>)ViewBag.DsJob;
+    List<Company> dsCongTy = (List<Company>)ViewBag.DsCongTy;
+    List<ApplicationStatusHistory> dsLichSu = (List<ApplicationStatusHistory>)ViewBag.DsLichSu;
+
+    Func<string, string> lopBadge = trangThai =>
+    {
+        switch (trangThai)
+        {
+            case "submitted": return "bg-secondary";
+            case "reviewing": return "bg-info text-dark";
+            case "interview": return "bg-warning text-dark";
+            case "offered": return "bg-success";
+            case "hired": return "bg-success";
+            case "rejected": return "bg-danger";
+            case "withdrawn": return "bg-dark";
+            default: return "bg-secondary";
+        }
+    };
+
+    Func<string, string> tenTrangThai = trangThai =>
+    {
+        switch (trangThai)
+        {
+            case "submitted": return "Đã nộp đơn";
+            case "reviewing": return "Đang xem xét";
+            case "interview": return "Mời phỏng vấn";
+            case "offered": return "Đã có offer";
+            case "hired": return "Trúng tuyển";
+            case "rejected": return "Từ chối";
+            case "withdrawn": return "Đã rút đơn";
+            default: return trangThai;
+        }
+    };
+}
+
+<h5 class="section-title">Đơn ứng tuyển của tôi (@Model.Count)</h5>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-light border">
+        Bạn chưa ứng tuyển vị trí nào. <a href="@Url.Action("DanhSachJob", "TuyenDung")">Tìm việc ngay</a>.
+    </div>
+}
+
+@foreach (Application dt in Model)
+{
+    Job job = dsJob.FirstOrDefault(j => j.Id == dt.JobId);
+    Company ct = job != null ? dsCongTy.FirstOrDefault(c => c.Id == job.CompanyId) : null;
+    List<ApplicationStatusHistory> lichSuDon = dsLichSu.Where(h => h.ApplicationId == dt.Id)
+        .OrderBy(h => h.ChangedAt).ToList();
+
+    <div class="bg-white rounded-4 shadow-sm p-4 mb-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-start">
+            <div class="d-flex">
+                @if (ct != null)
+                {
+                    <img class="company-logo me-3" src="@ct.LogoUrl" onerror="this.src='https://via.placeholder.com/56?text=Logo'" />
+                }
+                <div>
+                    <a class="fw-bold text-decoration-none" href="@Url.Action("ChiTietJob", "TuyenDung", new { id = dt.JobId })">
+                        @(job != null ? job.Title : "Tin tuyển dụng đã gỡ")
+                    </a>
+                    <div class="small text-muted">
+                        @(ct != null ? ct.Name : "") &middot; Nộp ngày @dt.AppliedAt.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                </div>
+            </div>
+            <span class="badge badge-status @lopBadge(dt.Status)">@tenTrangThai(dt.Status)</span>
+        </div>
+
+        @if (!string.IsNullOrEmpty(dt.CoverLetter))
+        {
+            <p class="small text-muted mt-3 mb-2" style="white-space:pre-line">@dt.CoverLetter</p>
+        }
+
+        @if (lichSuDon.Count > 0)
+        {
+            <hr />
+            <h6 class="small fw-bold text-muted mb-3">LỊCH SỬ XỬ LÝ</h6>
+            <ul class="list-unstyled ms-2 border-start ps-3">
+                @foreach (ApplicationStatusHistory h in lichSuDon)
+                {
+                    <li class="mb-2">
+                        <span class="badge badge-status @lopBadge(h.ToStatus)">@tenTrangThai(h.ToStatus)</span>
+                        <span class="small text-muted ms-2">@h.ChangedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        @if (!string.IsNullOrEmpty(h.Note))
+                        {
+                            <div class="small">@h.Note</div>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+}

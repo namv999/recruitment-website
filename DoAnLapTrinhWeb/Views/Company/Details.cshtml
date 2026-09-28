@@ -1,0 +1,76 @@
+@using DoAnLapTrinhWeb.Models
+@model Company
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<Job> dsJob = (List<Job>)ViewBag.DsJobCuaCongTy;
+}
+
+<div class="bg-white rounded-4 shadow-sm p-4 mb-4 d-flex flex-wrap align-items-center">
+    <img class="company-logo me-4" style="width:88px;height:88px;" src="@Model.LogoUrl" onerror="this.src='https://via.placeholder.com/88?text=Logo'" />
+    <div class="flex-grow-1">
+        <h2 class="fw-bold mb-1">
+            @Model.Name
+            @if (Model.IsVerified)
+            {
+                <span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Đã xác thực</span>
+            }
+        </h2>
+        <div class="text-muted">
+            <i class="fa-solid fa-industry me-1"></i>@Model.Industry
+            <span class="mx-2">|</span>
+            <i class="fa-solid fa-users me-1"></i>@Model.CompanySize nhân viên
+            <span class="mx-2">|</span>
+            <i class="fa-solid fa-location-dot me-1"></i>@Model.City
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Website))
+        {
+            <a href="@Model.Website" target="_blank" class="small">@Model.Website</a>
+        }
+    </div>
+    <div>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Edit", new { id = Model.Id })">
+            <i class="fa-solid fa-pen me-1"></i>Sửa thông tin
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+            <h5 class="section-title">Giới thiệu công ty</h5>
+            <p style="white-space:pre-line">@Model.Description</p>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h6 class="fw-bold">Địa chỉ</h6>
+            <p class="small text-muted">@Model.Address</p>
+            <h6 class="fw-bold">Mã số thuế</h6>
+            <p class="small text-muted">@Model.TaxCode</p>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+    <h5 class="section-title mb-0">Tin tuyển dụng (@dsJob.Count)</h5>
+    <a class="btn btn-accent btn-sm" href="@Url.Action("Create", "Job")"><i class="fa-solid fa-plus me-1"></i>Đăng tin cho công ty này</a>
+</div>
+<div class="row g-3 mt-1">
+    @foreach (Job j in dsJob)
+    {
+        <div class="col-md-6">
+            <div class="card card-job p-3">
+                <a href="@Url.Action("Details", "Job", new { id = j.Id })" class="fw-bold text-decoration-none stretched-link">@j.Title</a>
+                <div class="small text-muted mt-1"><i class="fa-solid fa-location-dot me-1"></i>@j.City &middot; @j.Level</div>
+                <div class="mt-2">
+                    <span class="badge bg-light text-dark border">@j.Status</span>
+                </div>
+            </div>
+        </div>
+    }
+    @if (dsJob.Count == 0)
+    {
+        <p class="text-muted">Công ty hiện chưa có tin tuyển dụng nào.</p>
+    }
+</div>

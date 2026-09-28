@@ -1,0 +1,77 @@
+@using DoAnLapTrinhWeb.Models
+@model Company
+@{
+    ViewBag.Title = "Đăng ký công ty mới";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h5 class="section-title">Đăng ký công ty mới</h5>
+
+        @if (TempData["Loi"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Loi"]</div>
+        }
+
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            @using (Html.BeginForm("Create", "Company", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Tên công ty *</label>
+                        <input class="form-control" type="text" name="Name" value="@Model?.Name" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Mã số thuế</label>
+                        <input class="form-control" type="text" name="TaxCode" value="@Model?.TaxCode" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Logo (URL hình ảnh)</label>
+                        <input class="form-control" type="text" name="LogoUrl" value="@Model?.LogoUrl" placeholder="https://..." />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Website</label>
+                        <input class="form-control" type="text" name="Website" value="@Model?.Website" placeholder="https://..." />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Ngành nghề</label>
+                        <input class="form-control" type="text" name="Industry" value="@Model?.Industry" placeholder="Công nghệ thông tin" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Quy mô công ty</label>
+                        <select class="form-select" name="CompanySize">
+                            <option value="1-10">1-10</option>
+                            <option value="11-50" selected="selected">11-50</option>
+                            <option value="51-200">51-200</option>
+                            <option value="201-500">201-500</option>
+                            <option value="501-1000">501-1000</option>
+                            <option value="1000+">1000+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Thành phố</label>
+                        <input class="form-control" type="text" name="City" value="@Model?.City" placeholder="TP.HCM" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Địa chỉ</label>
+                        <input class="form-control" type="text" name="Address" value="@Model?.Address" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Giới thiệu công ty</label>
+                        <textarea class="form-control" name="Description" rows="4">@Model?.Description</textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-accent mt-4 px-4" type="submit"><i class="fa-solid fa-check me-1"></i>Đăng ký</button>
+                <a class="btn btn-outline-secondary mt-4 px-4" href="@Url.Action("Index")">Huỷ</a>
+            }
+        </div>
+    </div>
+</div>

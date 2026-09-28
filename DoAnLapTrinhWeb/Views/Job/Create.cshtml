@@ -1,0 +1,157 @@
+@using DoAnLapTrinhWeb.Models
+@model Job
+@{
+    ViewBag.Title = "Đăng tin tuyển dụng mới";
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+    List<Company> dsCongTy = (List<Company>)ViewBag.DsCongTy;
+    List<JobCategory> dsDanhMuc = (List<JobCategory>)ViewBag.DsDanhMuc;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <h5 class="section-title">Đăng tin tuyển dụng mới</h5>
+
+        @if (TempData["Loi"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Loi"]</div>
+        }
+
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            @using (Html.BeginForm("Create", "Job", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Tên vị trí *</label>
+                        <input class="form-control" type="text" name="Title" value="@Model?.Title" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Công ty đăng tin *</label>
+                        <select class="form-select" name="CompanyId" required>
+                            <option value="">-- Chọn công ty --</option>
+                            @foreach (Company ct in dsCongTy)
+                            {
+                                <option value="@ct.Id">@ct.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Danh mục nghề</label>
+                        <select class="form-select" name="CategoryId">
+                            <option value="">-- Không chọn --</option>
+                            @foreach (JobCategory dm in dsDanhMuc)
+                            {
+                                <option value="@dm.Id">@dm.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Cấp bậc</label>
+                        <select class="form-select" name="Level">
+                            <option value="intern">Thực tập sinh</option>
+                            <option value="fresher" selected="selected">Fresher</option>
+                            <option value="junior">Junior</option>
+                            <option value="middle">Middle</option>
+                            <option value="senior">Senior</option>
+                            <option value="lead">Lead</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Loại hình</label>
+                        <select class="form-select" name="EmploymentType">
+                            <option value="full_time" selected="selected">Toàn thời gian</option>
+                            <option value="part_time">Bán thời gian</option>
+                            <option value="internship">Thực tập</option>
+                            <option value="contract">Hợp đồng</option>
+                            <option value="freelance">Freelance</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Hình thức làm việc</label>
+                        <select class="form-select" name="WorkMode">
+                            <option value="onsite" selected="selected">Tại văn phòng</option>
+                            <option value="remote">Từ xa</option>
+                            <option value="hybrid">Kết hợp</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Thành phố</label>
+                        <input class="form-control" type="text" name="City" value="@Model?.City" placeholder="TP.HCM" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Số lượng cần tuyển</label>
+                        <input class="form-control" type="number" min="1" name="Headcount" value="1" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Địa chỉ làm việc</label>
+                        <input class="form-control" type="text" name="Address" value="@Model?.Address" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Trạng thái tin</label>
+                        <select class="form-select" name="Status">
+                            <option value="draft">Nháp</option>
+                            <option value="pending">Chờ duyệt</option>
+                            <option value="published" selected="selected">Đăng ngay</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Lương tối thiểu</label>
+                        <input class="form-control" type="number" name="SalaryMin" value="@Model?.SalaryMin" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Lương tối đa</label>
+                        <input class="form-control" type="number" name="SalaryMax" value="@Model?.SalaryMax" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold">Đơn vị tiền</label>
+                        <input class="form-control" type="text" name="Currency" value="VND" />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" name="SalaryNegotiable" value="true" id="chkThoaThuan" />
+                            <label class="form-check-label" for="chkThoaThuan">Lương thoả thuận</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Kinh nghiệm tối thiểu (năm)</label>
+                        <input class="form-control" type="number" step="0.5" min="0" name="MinExperienceYears" value="0" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Học vấn tối thiểu</label>
+                        <select class="form-select" name="MinEducation">
+                            <option value="">-- Không yêu cầu --</option>
+                            <option value="high_school">THPT</option>
+                            <option value="college" selected="selected">Cao đẳng</option>
+                            <option value="bachelor">Đại học</option>
+                            <option value="master">Thạc sĩ</option>
+                            <option value="phd">Tiến sĩ</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Mô tả công việc</label>
+                        <textarea class="form-control" name="Description" rows="4">@Model?.Description</textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Yêu cầu ứng viên</label>
+                        <textarea class="form-control" name="Requirements" rows="3">@Model?.Requirements</textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Quyền lợi</label>
+                        <textarea class="form-control" name="Benefits" rows="3">@Model?.Benefits</textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-accent mt-4 px-4" type="submit"><i class="fa-solid fa-check me-1"></i>Đăng tin</button>
+                <a class="btn btn-outline-secondary mt-4 px-4" href="@Url.Action("Index")">Huỷ</a>
+            }
+        </div>
+    </div>
+</div>

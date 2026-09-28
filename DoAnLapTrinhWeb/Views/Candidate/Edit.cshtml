@@ -1,0 +1,94 @@
+@using DoAnLapTrinhWeb.Models
+@model Candidate
+@{
+    ViewBag.Title = "Sửa hồ sơ: " + Model.FullName;
+    Layout = "~/Views/Shared/_LayoutTuyenDung.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h5 class="section-title">Chỉnh sửa thông tin cá nhân</h5>
+
+        @if (TempData["Loi"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Loi"]</div>
+        }
+
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            @using (Html.BeginForm("Edit", "Candidate", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Họ tên *</label>
+                        <input class="form-control" type="text" name="FullName" value="@Model.FullName" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Số điện thoại</label>
+                        <input class="form-control" type="text" name="Phone" value="@Model.Phone" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Ngày sinh</label>
+                        <input class="form-control" type="date" name="DateOfBirth" value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Giới tính</label>
+                        <select class="form-select" name="Gender">
+                            <option value="">-- Không chọn --</option>
+                            <option value="male" selected="@(Model.Gender == "male" ? "selected" : null)">Nam</option>
+                            <option value="female" selected="@(Model.Gender == "female" ? "selected" : null)">Nữ</option>
+                            <option value="other" selected="@(Model.Gender == "other" ? "selected" : null)">Khác</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Thành phố</label>
+                        <input class="form-control" type="text" name="City" value="@Model.City" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Chức danh / Headline</label>
+                        <input class="form-control" type="text" name="Headline" value="@Model.Headline" placeholder="VD: Sinh viên IT - Software Engineering" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Giới thiệu bản thân</label>
+                        <textarea class="form-control" name="Summary" rows="4">@Model.Summary</textarea>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tổng số năm kinh nghiệm</label>
+                        <input class="form-control" type="number" step="0.5" min="0" name="TotalExperienceYears" value="@Model.TotalExperienceYears" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Trình độ học vấn cao nhất</label>
+                        <select class="form-select" name="HighestEducation">
+                            <option value="">-- Không chọn --</option>
+                            <option value="high_school" selected="@(Model.HighestEducation == "high_school" ? "selected" : null)">THPT</option>
+                            <option value="college" selected="@(Model.HighestEducation == "college" ? "selected" : null)">Cao đẳng</option>
+                            <option value="bachelor" selected="@(Model.HighestEducation == "bachelor" ? "selected" : null)">Đại học</option>
+                            <option value="master" selected="@(Model.HighestEducation == "master" ? "selected" : null)">Thạc sĩ</option>
+                            <option value="phd" selected="@(Model.HighestEducation == "phd" ? "selected" : null)">Tiến sĩ</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Mức lương mong muốn (đ)</label>
+                        <input class="form-control" type="number" name="ExpectedSalary" value="@Model.ExpectedSalary" />
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="OpenToWork" value="true" id="chkMoTimViec" checked="@(Model.OpenToWork ? "checked" : null)" />
+                            <label class="form-check-label" for="chkMoTimViec">Đang mở tìm việc</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-accent mt-4 px-4" type="submit"><i class="fa-solid fa-check me-1"></i>Lưu thay đổi</button>
+                <a class="btn btn-outline-secondary mt-4 px-4" href="@Url.Action("Profile", new { id = Model.Id })">Huỷ</a>
+            }
+        </div>
+    </div>
+</div>
