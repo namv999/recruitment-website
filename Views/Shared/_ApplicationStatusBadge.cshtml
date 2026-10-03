@@ -1,0 +1,37 @@
+﻿@model string
+@{
+    var status = Model ?? "";
+    var label = ViewBag.StatusLabel as string ?? status;
+
+    string badgeClass = "app-status-badge ";
+    switch (status.ToLower())
+    {
+        case "applied":
+            badgeClass += "app-status-applied";
+            break;
+        case "screening":
+        case "shortlisted":
+            badgeClass += "app-status-reviewing";
+            break;
+        case "interview":
+            badgeClass += "app-status-interview";
+            break;
+        case "offer":
+            badgeClass += "app-status-offer";
+            break;
+        case "hired":
+            badgeClass += "app-status-hired";
+            break;
+        case "rejected":
+            badgeClass += "app-status-rejected";
+            break;
+        case "withdrawn":
+            badgeClass += "app-status-withdrawn";
+            break;
+        default:
+            badgeClass += "bg-secondary text-white";
+            break;
+    }
+}
+
+<span class="badge @badgeClass">@label</span>

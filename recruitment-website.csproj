@@ -158,9 +158,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Constants\AppConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CandidateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\SavedJobController.cs" />
     <Compile Include="DAL\applications.cs">
       <DependentUpon>RecruitmentModel.tt</DependentUpon>
     </Compile>
@@ -234,8 +238,16 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Application\ApplicationApplyViewModel.cs" />
+    <Compile Include="Models\Application\ApplicationListViewModels.cs" />
+    <Compile Include="Models\Candidate\CandidateEditViewModel.cs" />
+    <Compile Include="Models\Candidate\CandidateProfileViewModel.cs" />
+    <Compile Include="Models\Candidate\CvListViewModel.cs" />
+    <Compile Include="Models\Candidate\EducationFormViewModel.cs" />
+    <Compile Include="Models\Candidate\ExperienceFormViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
+    <Compile Include="Models\SavedJob\SavedJobItemViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +293,10 @@
     <Content Include="DAL\RecruitmentModel.edmx.diagram">
       <DependentUpon>RecruitmentModel.edmx</DependentUpon>
     </Content>
-    <Content Include="ConnectionStrings.config" />
-    <None Include="ConnectionStrings.config.example" />
+    <None Include="ConnectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\candidate\cv-upload.js" />
+    <Content Include="Scripts\candidate\saved-job.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />
@@ -323,6 +336,14 @@
     <Content Include="Scripts\job\job.js" />
     <Content Include="Scripts\candidate\candidate.js" />
     <Content Include="Scripts\application\application.js" />
+    <Content Include="Views\Candidate\Profile.cshtml" />
+    <Content Include="Views\Candidate\Edit.cshtml" />
+    <Content Include="Views\Candidate\Cvs.cshtml" />
+    <Content Include="Views\Shared\_ApplicationStatusBadge.cshtml" />
+    <Content Include="Views\Application\Apply.cshtml" />
+    <Content Include="Views\Application\Index.cshtml" />
+    <Content Include="Views\Application\Details.cshtml" />
+    <Content Include="Views\SavedJob\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

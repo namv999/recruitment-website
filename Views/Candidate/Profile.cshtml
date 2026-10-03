@@ -1,0 +1,278 @@
+﻿@model recruitment_website.Models.Candidate.CandidateProfileViewModel
+
+@{
+    ViewBag.Title = "Hồ sơ của tôi";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/candidate/candidate.css" />
+}
+
+<div class="container my-4 candidate-profile-container">
+    <!-- Header Thông tin cá nhân -->
+    <div class="card p-4 mb-4 shadow-sm bento-card candidate-header-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h2 class="mb-1 fw-bold">@(string.IsNullOrEmpty(Model.FullName) ? "Chưa cập nhật họ tên" : Model.FullName)</h2>
+                <p class="text-muted mb-2">@(string.IsNullOrEmpty(Model.Headline) ? "Chưa cập nhật chức danh/mục tiêu" : Model.Headline)</p>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    @if (Model.OpenToWork)
+                    {
+                        <span class="badge bg-success">Đang tìm việc</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Không tìm việc</span>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.City))
+                    {
+                        <span class="badge bg-light text-dark border"><i class="bi bi-geo-alt"></i> @Model.City</span>
+                    }
+                    <span class="badge bg-light text-dark border">@Model.TotalExperienceYears năm kinh nghiệm</span>
+                    @if (!string.IsNullOrEmpty(Model.HighestEducationLabel))
+                    {
+                        <span class="badge bg-light text-dark border">@Model.HighestEducationLabel</span>
+                    }
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("Edit", "Candidate")" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil"></i> Chỉnh sửa hồ sơ
+                </a>
+                <a href="@Url.Action("Cvs", "Candidate")" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-person"></i> Quản lý CV
+                </a>
+            </div>
+        </div>
+        <hr class="my-3" />
+        <div class="row g-3 small">
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <div class="col-12 col-md-4">
+                    <strong>Email:</strong> @Model.Email
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Phone))
+            {
+                <div class="col-12 col-md-4">
+                    <strong>Số điện thoại:</strong> @Model.Phone
+                </div>
+            }
+            @if (Model.DateOfBirth.HasValue)
+            {
+                <div class="col-12 col-md-4">
+                    <strong>Ngày sinh:</strong> @Model.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.GenderLabel))
+            {
+                <div class="col-12 col-md-4">
+                    <strong>Giới tính:</strong> @Model.GenderLabel
+                </div>
+            }
+            @if (Model.ExpectedSalary.HasValue)
+            {
+                <div class="col-12 col-md-4">
+                    <strong>Mức lương mong muốn:</strong> @Model.ExpectedSalary.Value.ToString("N0") VNĐ
+                </div>
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Summary))
+        {
+            <div class="mt-3">
+                <h6 class="fw-bold mb-1">Giới thiệu bản thân:</h6>
+                <p class="text-muted mb-0">@Model.Summary</p>
+            </div>
+        }
+    </div>
+
+    <!-- Bento Grid Section: Kinh nghiệm & Học vấn -->
+    <div class="row g-4">
+        <!-- Cột Kinh nghiệm -->
+        <div class="col-12 col-lg-6">
+            <div class="card p-4 h-100 shadow-sm bento-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="h5 mb-0 fw-bold"><i class="bi bi-briefcase me-2"></i>Kinh nghiệm làm việc</h4>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#addExperienceForm">
+                        + Thêm mới
+                    </button>
+                </div>
+
+                <!-- Form thêm Kinh nghiệm (Collapse) -->
+                <div class="collapse mb-4" id="addExperienceForm">
+                    <div class="card card-body bg-light">
+                        <h6 class="fw-bold mb-3">Thêm kinh nghiệm làm việc</h6>
+                        <form action="@Url.Action("AddExperience", "Candidate")" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-2">
+                                <label class="form-label small required">Tên công ty</label>
+                                <input type="text" name="CompanyName" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small required">Vị trí công việc</label>
+                                <input type="text" name="JobTitle" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label class="form-label small required">Ngày bắt đầu</label>
+                                    <input type="date" name="StartDate" class="form-control form-control-sm" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">Ngày kết thúc</label>
+                                    <input type="date" name="EndDate" class="form-control form-control-sm" />
+                                    <span class="form-text extra-small">Để trống nếu đang làm việc</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Mô tả công việc</label>
+                                <textarea name="Description" class="form-control form-control-sm" rows="3"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="collapse" data-bs-target="#addExperienceForm">Hủy</button>
+                                <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Danh sách Kinh nghiệm -->
+                @if (Model.Experiences != null && Model.Experiences.Any())
+                {
+                    <div class="candidate-list">
+                        @foreach (var exp in Model.Experiences)
+                        {
+                            <div class="border-bottom pb-3 mb-3 candidate-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1">@exp.JobTitle</h6>
+                                    <div class="text-primary small mb-1">@exp.CompanyName</div>
+                                    <div class="text-muted extra-small mb-2">
+                                        @exp.StartDate.ToString("MM/yyyy") -
+                                        @(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Hiện tại")
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(exp.Description))
+                                    {
+                                        <p class="small text-muted mb-0">@exp.Description</p>
+                                    }
+                                </div>
+                                <form action="@Url.Action("DeleteExperience", "Candidate")" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kinh nghiệm này?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@exp.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <!-- Empty State -->
+                    <div class="text-center py-4 my-auto candidate-empty-state">
+                        <div class="display-6 text-muted mb-2"><i class="bi bi-briefcase"></i></div>
+                        <p class="text-muted small mb-0">Chưa có thông tin kinh nghiệm làm việc.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Cột Học vấn -->
+        <div class="col-12 col-lg-6">
+            <div class="card p-4 h-100 shadow-sm bento-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="h5 mb-0 fw-bold"><i class="bi bi-mortarboard me-2"></i>Học vấn</h4>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#addEducationForm">
+                        + Thêm mới
+                    </button>
+                </div>
+
+                <!-- Form thêm Học vấn (Collapse) -->
+                <div class="collapse mb-4" id="addEducationForm">
+                    <div class="card card-body bg-light">
+                        <h6 class="fw-bold mb-3">Thêm thông tin học vấn</h6>
+                        <form action="@Url.Action("AddEducation", "Candidate")" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-2">
+                                <label class="form-label small required">Trường học / Cơ sở đào tạo</label>
+                                <input type="text" name="SchoolName" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Chuyên ngành</label>
+                                <input type="text" name="Major" class="form-control form-control-sm" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Bằng cấp</label>
+                                <select name="Degree" class="form-select form-select-sm">
+                                    <option value="">-- Chọn bằng cấp --</option>
+                                    <option value="high_school">Trung học phổ thông</option>
+                                    <option value="college">Cao đẳng</option>
+                                    <option value="bachelor">Đại học</option>
+                                    <option value="master">Thạc sĩ</option>
+                                    <option value="phd">Tiến sĩ</option>
+                                </select>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small">Năm bắt đầu</label>
+                                    <input type="number" name="StartYear" min="1950" max="2100" class="form-control form-control-sm" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">Năm kết thúc</label>
+                                    <input type="number" name="EndYear" min="1950" max="2100" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="collapse" data-bs-target="#addEducationForm">Hủy</button>
+                                <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Danh sách Học vấn -->
+                @if (Model.Educations != null && Model.Educations.Any())
+                {
+                    <div class="candidate-list">
+                        @foreach (var edu in Model.Educations)
+                        {
+                            <div class="border-bottom pb-3 mb-3 candidate-item d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1">@edu.SchoolName</h6>
+                                    <div class="text-primary small mb-1">
+                                        @(string.IsNullOrEmpty(edu.Major) ? "Chuyên ngành chưa cập nhật" : edu.Major)
+                                        @if (!string.IsNullOrEmpty(edu.DegreeLabel))
+                                        {
+                                            <span>(@edu.DegreeLabel)</span>
+                                        }
+                                    </div>
+                                    <div class="text-muted extra-small">
+                                        @if (edu.StartYear.HasValue || edu.EndYear.HasValue)
+                                        {
+                                            <span>@(edu.StartYear.HasValue ? edu.StartYear.Value.ToString() : "N/A") - @(edu.EndYear.HasValue ? edu.EndYear.Value.ToString() : "Hiện tại")</span>
+                                        }
+                                    </div>
+                                </div>
+                                <form action="@Url.Action("DeleteEducation", "Candidate")" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thông tin học vấn này?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@edu.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <!-- Empty State -->
+                    <div class="text-center py-4 my-auto candidate-empty-state">
+                        <div class="display-6 text-muted mb-2"><i class="bi bi-mortarboard"></i></div>
+                        <p class="text-muted small mb-0">Chưa có thông tin học vấn.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/candidate/candidate.js"></script>
+}

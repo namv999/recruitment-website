@@ -1,0 +1,138 @@
+﻿@model recruitment_website.Models.Candidate.CvListViewModel
+
+@{
+    ViewBag.Title = "Quản lý CV";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/candidate/candidate.css" />
+}
+
+<div class="container my-4 candidate-cvs-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Quản lý CV của tôi</h3>
+            <p class="text-muted small mb-0">Tải lên và quản lý các CV để dễ dàng ứng tuyển việc làm.</p>
+        </div>
+        <a href="@Url.Action("Profile", "Candidate")" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Về Hồ sơ
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Cột Tải lên CV -->
+        <div class="col-12 col-lg-4">
+            <div class="card p-4 shadow-sm bento-card">
+                <h5 class="fw-bold mb-3"><i class="bi bi-cloud-upload me-2"></i>Tải lên CV mới</h5>
+
+                @using (Html.BeginForm("UploadCv", "Candidate", FormMethod.Post, new { enctype = "multipart/form-data", id = "cvUploadForm" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold required">Tên gợi nhớ CV</label>
+                        <input type="text" name="Title" class="form-control" maxlength="150" placeholder="Ví dụ: CV Backend .NET" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold required">Chọn tệp CV</label>
+                        <input type="file" name="file" id="cvFileInput" class="form-control" accept=".pdf,.doc,.docx" required />
+                        <span id="cvFileError" class="text-danger small mt-1 d-block"></span>
+                        <span class="form-text extra-small d-block mt-1 text-muted">
+                            Định dạng hỗ trợ: .pdf, .doc, .docx. Dung lượng tối đa: 3 MB.
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="btnUploadCv">
+                        <i class="bi bi-upload"></i> Tải lên CV
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Cột Danh sách CV -->
+        <div class="col-12 col-lg-8">
+            <div class="card p-4 shadow-sm bento-card">
+                <h5 class="fw-bold mb-3"><i class="bi bi-files me-2"></i>Danh sách CV đã tải</h5>
+
+                @if (Model != null && Model.Cvs != null && Model.Cvs.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tên CV</th>
+                                    <th>Định dạng</th>
+                                    <th>Ngày tải</th>
+                                    <th class="text-end">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cv in Model.Cvs)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@cv.Title</div>
+                                            @if (cv.IsDefault)
+                                            {
+                                                <span class="badge bg-success small">Mặc định</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">@cv.FileType</span>
+                                        </td>
+                                        <td class="small text-muted">
+                                            @cv.UploadedAt.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-end gap-1">
+                                                <!-- Link Download -->
+                                                <a href="@Url.Action("DownloadCv", "Candidate", new { id = cv.Id })" class="btn btn-sm btn-outline-primary" title="Tải về">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+
+                                                <!-- Form Đặt mặc định -->
+                                                @if (!cv.IsDefault)
+                                                {
+                                                    <form action="@Url.Action("SetDefaultCv", "Candidate")" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@cv.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Đặt mặc định">
+                                                            <i class="bi bi-star"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+
+                                                <!-- Form Xóa -->
+                                                <form action="@Url.Action("DeleteCv", "Candidate")" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa CV này?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@cv.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <!-- Empty State -->
+                    <div class="text-center py-5 candidate-empty-state">
+                        <div class="display-5 text-muted mb-3"><i class="bi bi-file-earmark-x"></i></div>
+                        <h6 class="text-muted fw-normal">Bạn chưa tải lên CV nào.</h6>
+                        <p class="text-muted extra-small">Hãy tải lên CV đầu tiên ở khung bên cạnh để ứng tuyển nhanh chóng.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/candidate/cv-upload.js"></script>
+}
