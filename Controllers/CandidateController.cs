@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -247,13 +247,28 @@ namespace recruitment_website.Controllers
                     .OrderByDescending(x => x.is_default)
                     .ThenByDescending(x => x.uploaded_at)
                     .ToList()
-                    .Select(x => new CvItemViewModel
+                    .Select(x =>
                     {
-                        Id = x.id,
-                        Title = x.title,
-                        FileType = Path.GetExtension(x.file_url).TrimStart('.').ToUpperInvariant(),
-                        IsDefault = x.is_default,
-                        UploadedAt = x.uploaded_at
+                        string physicalPath = Server.MapPath(x.file_url);
+                        string fileSize = "N/A";
+                        if (System.IO.File.Exists(physicalPath))
+                        {
+                            long bytes = new FileInfo(physicalPath).Length;
+                            fileSize = FormatFileSize(bytes);
+                        }
+
+                        return new CvItemViewModel
+                        {
+                            Id = x.id,
+                            Title = x.title,
+                            FileType = Path.GetExtension(x.file_url).TrimStart('.').ToUpperInvariant(),
+                            IsDefault = x.is_default,
+                            UploadedAt = x.uploaded_at,
+                            FileSizeFormatted = fileSize,
+                            ApplicationsCount = x.applications != null ? x.applications.Count : 0,
+                            DownloadUrl = Url.Action("DownloadCv", "Candidate", new { id = x.id }),
+                            PreviewUrl = Url.Action("PreviewCv", "Candidate", new { id = x.id })
+                        };
                     }).ToList()
             };
             return View(vm);
@@ -392,7 +407,38 @@ namespace recruitment_website.Controllers
             return File(physicalPath, contentType, safeTitle + ext);
         }
 
+        // GET: Candidate/PreviewCv/5  (xem trước tài liệu CV inline)
+        public ActionResult PreviewCv(long id)
+        {
+            var c = GetCurrentCandidate();
+            if (c == null) return RedirectToEditFirst();
+
+            var cv = _db.cvs.FirstOrDefault(x => x.id == id && x.candidate_id == c.id);
+            if (cv == null) return HttpNotFound();
+
+            string physicalPath = Server.MapPath(cv.file_url);
+            if (!System.IO.File.Exists(physicalPath)) return HttpNotFound();
+
+            string ext = Path.GetExtension(physicalPath).ToLowerInvariant();
+            string contentType = ext == ".pdf" ? "application/pdf"
+                               : ext == ".docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                               : "application/msword";
+
+            string safeTitle = string.Concat(cv.title.Split(Path.GetInvalidFileNameChars()));
+            Response.AppendHeader("Content-Disposition", "inline; filename=\"" + Url.Encode(safeTitle + ext) + "\"");
+            return File(physicalPath, contentType);
+        }
+
         // ===================== HELPER =====================
+
+        private static string FormatFileSize(long bytes)
+        {
+            if (bytes >= 1024 * 1024)
+                return string.Format("{0:0.##} MB", (double)bytes / (1024 * 1024));
+            if (bytes >= 1024)
+                return string.Format("{0:0.##} KB", (double)bytes / 1024);
+            return bytes + " B";
+        }
 
         private long GetCurrentUserId()
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,6 +16,10 @@ namespace recruitment_website.Models.Candidate
         public string FileType { get; set; }   // PDF / DOC / DOCX
         public bool IsDefault { get; set; }
         public DateTime UploadedAt { get; set; }
+        public string FileSizeFormatted { get; set; }
+        public int ApplicationsCount { get; set; }
+        public string PreviewUrl { get; set; }
+        public string DownloadUrl { get; set; }
     }
 
     public class CvUploadViewModel
