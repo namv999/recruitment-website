@@ -1,0 +1,44 @@
+@model recruitment_website.Models.Shared.PaginationViewModel
+@* Phân trang dùng chung. Giữ nguyên điều kiện lọc qua Model.RouteValues. Ẩn khi chỉ có 1 trang. *@
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Phân trang" class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                <a class="page-link" href="@(Model.HasPrevious ? Url.Action(Model.Action, Model.Controller, Model.RouteFor(Model.Page - 1)) : "#")"
+                   aria-label="Trang trước" @(Model.HasPrevious ? null : MvcHtmlString.Create("tabindex=\"-1\" aria-disabled=\"true\""))>&laquo;</a>
+            </li>
+
+            @if (Model.StartPage > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action(Model.Action, Model.Controller, Model.RouteFor(1))">1</a></li>
+                if (Model.StartPage > 2)
+                {
+                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                }
+            }
+
+            @for (int p = Model.StartPage; p <= Model.EndPage; p++)
+            {
+                <li class="page-item @(p == Model.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action(Model.Action, Model.Controller, Model.RouteFor(p))"
+                       @(p == Model.Page ? MvcHtmlString.Create("aria-current=\"page\"") : null)>@p</a>
+                </li>
+            }
+
+            @if (Model.EndPage < Model.TotalPages)
+            {
+                if (Model.EndPage < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                }
+                <li class="page-item"><a class="page-link" href="@Url.Action(Model.Action, Model.Controller, Model.RouteFor(Model.TotalPages))">@Model.TotalPages</a></li>
+            }
+
+            <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                <a class="page-link" href="@(Model.HasNext ? Url.Action(Model.Action, Model.Controller, Model.RouteFor(Model.Page + 1)) : "#")"
+                   aria-label="Trang sau" @(Model.HasNext ? null : MvcHtmlString.Create("tabindex=\"-1\" aria-disabled=\"true\""))>&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+}

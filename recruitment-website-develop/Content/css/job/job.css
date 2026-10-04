@@ -1,0 +1,252 @@
+/* ==========================================================================
+   Content/css/job/job.css
+   Module: Job Listings & Management
+   Rules: Prefix classes with .job- (CONVENTIONS.md)
+   ========================================================================== */
+
+.job-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.35rem 1.5rem;
+    transition: all var(--transition-normal);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.job-card:hover {
+    border-color: var(--color-primary-border);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+.job-card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.35rem;
+    line-height: 1.35;
+}
+
+.job-card-title a {
+    color: var(--color-text);
+}
+
+.job-card-title a:hover {
+    color: var(--color-primary);
+}
+
+.job-company-name {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.job-salary-tag {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #059669;
+    background-color: #ecfdf5;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+}
+
+.job-skill-pill {
+    font-size: 0.775rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface-muted);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0.2rem 0.55rem;
+}
+
+/* ==========================================================================
+   Bổ sung (Bước 9) — Views của module Job
+   ========================================================================== */
+
+/* ---- Logo / chữ cái đầu công ty ---- */
+.job-company-logo {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    object-fit: contain;
+}
+
+.job-company-logo-initial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    border-color: var(--color-primary-border);
+}
+
+.job-company-logo-lg {
+    width: 64px;
+    height: 64px;
+}
+
+/* ---- Thông tin phụ dưới tiêu đề ---- */
+.job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.job-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.job-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-subtle);
+}
+
+/* ---- Bộ lọc ---- */
+@media (min-width: 768px) {
+    .job-filter-panel {
+        position: sticky;
+        top: 85px;
+    }
+}
+
+/* ---- Nhãn trạng thái tin (có chữ, không chỉ dựa vào màu) ---- */
+.job-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.job-status-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+}
+
+.job-status-published { background: var(--color-success-light); color: #15803d; border-color: var(--color-success-border); }
+.job-status-pending   { background: var(--color-warning-light); color: #b45309; border-color: var(--color-warning-border); }
+.job-status-draft,
+.job-status-paused,
+.job-status-expired   { background: var(--color-surface-muted); color: var(--color-text-muted); border-color: var(--color-border); }
+.job-status-closed    { background: var(--color-danger-light); color: #b91c1c; border-color: var(--color-danger-border); }
+
+/* ---- Trang chi tiết ---- */
+.job-text-block {
+    white-space: pre-line;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+.job-section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.job-overview-list {
+    margin: 0;
+}
+
+.job-overview-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: 0.9rem;
+}
+
+.job-overview-row:last-child {
+    border-bottom: 0;
+}
+
+.job-overview-row dt {
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+
+.job-overview-row dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+    color: var(--color-text);
+}
+
+.job-skill-pill-required {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary-border);
+}
+
+.job-skill-group-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.job-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #15803d;
+}
+
+/* ---- Bảng quản lý tin ---- */
+.job-manage-title {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.job-manage-title:hover {
+    color: var(--color-primary);
+}
+
+.job-manage-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem;
+}
+
+.job-manage-actions form {
+    margin: 0;
+}
+
+/* ---- Form đăng / sửa tin ---- */
+.job-form-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}

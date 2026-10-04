@@ -1,0 +1,118 @@
+@model recruitment_website.Models.Job.JobSearchViewModel
+@using recruitment_website.Constants
+@{
+    ViewBag.Title = "Tìm việc làm";
+
+    // Chỉ nhà tuyển dụng mới thấy nút quản lý tin (BaseController đã đẩy CurrentUserRole lên ViewBag)
+    bool isEmployer = (string)ViewBag.CurrentUserRole == UserRole.Employer;
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/job/job.css" />
+}
+
+<div class="container py-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Việc làm</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Việc làm đang tuyển</h1>
+            <p class="text-muted mb-0">Tìm vị trí phù hợp với kỹ năng và mong muốn của bạn.</p>
+        </div>
+
+        @if (isEmployer)
+        {
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-primary" href="@Url.Action("MyJobs", "Job")">Quản lý tin đã đăng</a>
+                <a class="btn btn-primary" href="@Url.Action("Create", "Job")">Đăng tin mới</a>
+            </div>
+        }
+    </div>
+
+    <div class="row g-4">
+        <!-- BỘ LỌC -->
+        <aside class="col-md-4 col-lg-3">
+            @using (Html.BeginForm("Index", "Job", FormMethod.Get, new { @class = "bento-card p-3 job-filter-panel", role = "search" }))
+            {
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Keyword, new { @class = "form-label fw-semibold text-secondary" })
+                    @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control", placeholder = "Tên công việc...", maxlength = 100 })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.CategoryId, new { @class = "form-label fw-semibold text-secondary" })
+                    @Html.DropDownListFor(m => m.CategoryId, Model.CategoryOptions, "Tất cả ngành nghề", new { @class = "form-select" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.City, new { @class = "form-label fw-semibold text-secondary" })
+                    @Html.DropDownListFor(m => m.City, Model.CityOptions, "Tất cả thành phố", new { @class = "form-select" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Level, new { @class = "form-label fw-semibold text-secondary" })
+                    @Html.DropDownListFor(m => m.Level, Model.LevelOptions, "Tất cả cấp bậc", new { @class = "form-select" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.EmploymentType, new { @class = "form-label fw-semibold text-secondary" })
+                    @Html.DropDownListFor(m => m.EmploymentType, Model.EmploymentTypeOptions, "Tất cả hình thức", new { @class = "form-select" })
+                </div>
+                <div class="mb-3">
+                    <span class="form-label fw-semibold text-secondary d-block">Mức lương (VND)</span>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.SalaryMin, new { @class = "form-control", type = "number", min = 0, step = 1000000, placeholder = "Từ", aria_label = "Lương từ" })
+                        </div>
+                        <div class="col-6">
+                            @Html.TextBoxFor(m => m.SalaryMax, new { @class = "form-control", type = "number", min = 0, step = 1000000, placeholder = "Đến", aria_label = "Lương đến" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    @if (Model.HasFilter)
+                    {
+                        <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Job")">Xóa bộ lọc</a>
+                    }
+                </div>
+            }
+        </aside>
+
+        <!-- KẾT QUẢ -->
+        <section class="col-md-8 col-lg-9" aria-label="Kết quả tìm kiếm">
+            <p class="text-muted mb-3">Tìm thấy <strong class="text-dark">@Model.TotalItems</strong> việc làm</p>
+
+            @if (Model.Jobs.Count == 0)
+            {
+                <div class="bento-card p-5 text-center">
+                    <h2 class="h5 fw-bold">Không tìm thấy việc làm phù hợp</h2>
+                    <p class="text-muted mb-3">
+                        @(Model.HasFilter ? "Hãy thử bỏ bớt điều kiện lọc hoặc dùng từ khóa khác." : "Hiện chưa có tin tuyển dụng nào đang mở.")
+                    </p>
+                    @if (Model.HasFilter)
+                    {
+                        <div><a class="btn btn-outline-primary" href="@Url.Action("Index", "Job")">Xem tất cả việc làm</a></div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="d-grid gap-3">
+                    @foreach (var job in Model.Jobs)
+                    {
+                        @Html.Partial("_JobCard", job)
+                    }
+                </div>
+
+                @Html.Partial("_Pagination", Model.Pagination)
+            }
+        </section>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/job/job.js"></script>
+}
