@@ -1,0 +1,225 @@
+﻿@model recruitment_website.Models.Application.MyApplicationsViewModel
+
+@{
+    ViewBag.Title = "Danh sách đơn ứng tuyển";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/application/application.css" />
+}
+
+<div class="container py-2 app-container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Đơn ứng tuyển của tôi</h3>
+            <p class="text-muted small mb-0">Theo dõi tiến trình các công việc bạn đã nộp đơn.</p>
+        </div>
+
+        <!-- Form Lọc trạng thái -->
+        <form method="get" action="@Url.Action("Index", "Application")" class="d-flex align-items-center gap-2">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                @if (Model.StatusOptions != null)
+                {
+                    foreach (var option in Model.StatusOptions)
+                    {
+                        <option value="@option.Value" @(Model.StatusFilter == option.Value ? "selected" : "")>@option.Text</option>
+                    }
+                }
+            </select>
+            @if (!string.IsNullOrEmpty(Model.StatusFilter))
+            {
+                <a href="@Url.Action("Index", "Application")" class="btn btn-sm btn-outline-secondary text-nowrap">Xóa bộ lọc</a>
+            }
+        </form>
+    </div>
+
+    <!-- Danh sách Đơn ứng tuyển -->
+    <div class="card p-4 shadow-sm candidate-card">
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Công việc / Công ty</th>
+                            <th>CV sử dụng</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày nộp</th>
+                            <th class="text-end">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("Details", "Job", new { id = item.JobId })" class="fw-bold text-decoration-none text-dark">
+                                        @item.JobTitle
+                                    </a>
+                                    <div class="text-muted small"><i class="bi bi-building me-1"></i>@item.CompanyName</div>
+                                </td>
+                                <td>
+                                    <span class="small">@item.CvTitle</span>
+                                </td>
+                                <td>
+                                    @Html.Partial("_ApplicationStatusBadge", item.Status, new ViewDataDictionary { { "StatusLabel", item.StatusLabel } })
+                                </td>
+                                <td class="small text-muted">
+                                    @item.AppliedAt.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <a href="@Url.Action("Details", "Application", new { id = item.ApplicationId })" class="btn btn-sm btn-outline-primary">
+                                            Chi tiết
+                                        </a>
+
+                                        @if (item.CanWithdraw)
+                                        {
+                                            <form method="post" action="@Url.Action("Withdraw", "Application")" class="d-inline app-withdraw-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.ApplicationId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Rút đơn</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5 candidate-empty-state">
+                <div class="display-5 text-muted mb-3"><i class="bi bi-inbox"></i></div>
+                <h6 class="text-muted fw-normal">Không tìm thấy đơn ứng tuyển nào.</h6>
+                <div class="mt-3">
+                    @if (!string.IsNullOrEmpty(Model.StatusFilter))
+                    {
+                        <a href="@Url.Action("Index", "Application")" class="btn btn-sm btn-outline-secondary me-2">Xóa bộ lọc</a>
+                    }
+                    <a href="@Url.Action("Index", "Job")" class="btn btn-sm btn-primary">Tìm việc ngay</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/application/application.js"></script>
+}@model recruitment_website.Models.Application.MyApplicationsViewModel
+
+@{
+    ViewBag.Title = "Danh sách đơn ứng tuyển";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/application/application.css" />
+}
+
+<div class="container py-2 app-container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Đơn ứng tuyển của tôi</h3>
+            <p class="text-muted small mb-0">Theo dõi tiến trình các công việc bạn đã nộp đơn.</p>
+        </div>
+
+        <!-- Form Lọc trạng thái -->
+        <form method="get" action="@Url.Action("Index", "Application")" class="d-flex align-items-center gap-2">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                @if (Model.StatusOptions != null)
+                {
+                    foreach (var option in Model.StatusOptions)
+                    {
+                        <option value="@option.Value" @(Model.StatusFilter == option.Value ? "selected" : "")>@option.Text</option>
+                    }
+                }
+            </select>
+            @if (!string.IsNullOrEmpty(Model.StatusFilter))
+            {
+                <a href="@Url.Action("Index", "Application")" class="btn btn-sm btn-outline-secondary text-nowrap">Xóa bộ lọc</a>
+            }
+        </form>
+    </div>
+
+    <!-- Danh sách Đơn ứng tuyển -->
+    <div class="card p-4 shadow-sm candidate-card">
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Công việc / Công ty</th>
+                            <th>CV sử dụng</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày nộp</th>
+                            <th class="text-end">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("Details", "Job", new { id = item.JobId })" class="fw-bold text-decoration-none text-dark">
+                                        @item.JobTitle
+                                    </a>
+                                    <div class="text-muted small"><i class="bi bi-building me-1"></i>@item.CompanyName</div>
+                                </td>
+                                <td>
+                                    <span class="small">@item.CvTitle</span>
+                                </td>
+                                <td>
+                                    @Html.Partial("_ApplicationStatusBadge", item.Status, new ViewDataDictionary { { "StatusLabel", item.StatusLabel } })
+                                </td>
+                                <td class="small text-muted">
+                                    @item.AppliedAt.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <a href="@Url.Action("Details", "Application", new { id = item.ApplicationId })" class="btn btn-sm btn-outline-primary">
+                                            Chi tiết
+                                        </a>
+
+                                        @if (item.CanWithdraw)
+                                        {
+                                            <form method="post" action="@Url.Action("Withdraw", "Application")" class="d-inline app-withdraw-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.ApplicationId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Rút đơn</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5 candidate-empty-state">
+                <div class="display-5 text-muted mb-3"><i class="bi bi-inbox"></i></div>
+                <h6 class="text-muted fw-normal">Không tìm thấy đơn ứng tuyển nào.</h6>
+                <div class="mt-3">
+                    @if (!string.IsNullOrEmpty(Model.StatusFilter))
+                    {
+                        <a href="@Url.Action("Index", "Application")" class="btn btn-sm btn-outline-secondary me-2">Xóa bộ lọc</a>
+                    }
+                    <a href="@Url.Action("Index", "Job")" class="btn btn-sm btn-primary">Tìm việc ngay</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/application/application.js"></script>
+}

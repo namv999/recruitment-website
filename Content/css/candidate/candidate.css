@@ -5,28 +5,117 @@
    ========================================================================== */
 
 .candidate-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--color-surface, #ffffff);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-lg, 12px);
     padding: 1.5rem;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-normal, 0.2s ease-in-out);
 }
 
-.candidate-card:hover {
-    border-color: #cbd5e1;
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
-}
+    .candidate-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-card-hover, 0 4px 12px rgba(0, 0, 0, 0.05));
+        transform: translateY(-2px);
+    }
 
 .candidate-avatar {
     width: 72px;
     height: 72px;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-full, 50%);
     object-fit: cover;
-    border: 2px solid var(--color-primary-border);
+    border: 2px solid var(--color-primary-border, #cbd5e1);
 }
 
 .candidate-headline {
     font-size: 0.95rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-muted, #64748b);
 }
+
+/* --- Bổ sung cho các View Profile, Edit & Cvs --- */
+
+.candidate-empty-state {
+    background-color: var(--color-bg-light, #f8f9fa);
+    border: 1px dashed var(--color-border, #dee2e6);
+    border-radius: var(--radius-md, 8px);
+    padding: 2rem 1rem;
+}
+
+.candidate-item:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.candidate-extra-small {
+    font-size: 0.75rem;
+}
+
+label.candidate-required::after {
+    content: " *";
+    color: var(--color-danger, #dc3545);
+}
+
+/* --- Quản lý CV & Xem trước (Preview) --- */
+.cv-table-row {
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.cv-table-row:hover {
+    background-color: rgba(37, 99, 235, 0.04) !important;
+}
+
+.cv-action-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.cv-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.cv-preview-container {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    min-height: 520px;
+}
+
+.cv-preview-iframe {
+    width: 100%;
+    height: 560px;
+    border: none;
+    display: block;
+}
+
+.cv-meta-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    height: 100%;
+}
+
+.cv-meta-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.cv-meta-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+

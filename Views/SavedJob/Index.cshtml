@@ -1,0 +1,94 @@
+﻿@model List<recruitment_website.Models.SavedJob.SavedJobItemViewModel>
+
+@{
+    ViewBag.Title = "Tin tuyển dụng đã lưu";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/application/application.css" />
+}
+
+<div class="container py-2 app-container">
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1">Tin tuyển dụng đã lưu</h3>
+        <p class="text-muted small mb-0">Danh sách các cơ hội việc làm bạn đang quan tâm.</p>
+    </div>
+
+    <div class="card p-4 shadow-sm candidate-card">
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-3">
+                @foreach (var item in Model)
+                {
+                    <div class="col-12">
+                        <div class="border rounded p-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                            <div>
+                                <h5 class="fw-bold mb-1">
+                                    <a href="@Url.Action("Details", "Job", new { id = item.JobId })" class="text-decoration-none text-dark">
+                                        @item.Title
+                                    </a>
+                                </h5>
+                                <div class="text-muted small mb-2">
+                                    <span class="me-3"><i class="bi bi-building me-1"></i>@item.CompanyName</span>
+                                    @if (!string.IsNullOrEmpty(item.City))
+                                    {
+                                        <span class="me-3"><i class="bi bi-geo-alt me-1"></i>@item.City</span>
+                                    }
+                                    @if (!string.IsNullOrEmpty(item.SalaryText))
+                                    {
+                                        <span class="text-success fw-semibold"><i class="bi bi-cash me-1"></i>@item.SalaryText</span>
+                                    }
+                                </div>
+                                <div class="candidate-extra-small text-muted">
+                                    Đã lưu: @item.SavedAt.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                @if (!item.IsOpen)
+                                {
+                                    <span class="badge bg-secondary">Tin đã đóng</span>
+                                }
+                                else if (item.HasApplied)
+                                {
+                                    <span class="badge bg-success">Đã ứng tuyển</span>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Apply", "Application", new { jobId = item.JobId })" class="btn btn-primary btn-sm">
+                                        Ứng tuyển
+                                    </a>
+                                }
+
+                                <!-- Form Bỏ lưu tin -->
+                                <form method="post" action="@Url.Action("Toggle", "SavedJob")" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="jobId" value="@item.JobId" />
+                                    <input type="hidden" name="returnUrl" value="@Request.RawUrl" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm" aria-label="Bỏ lưu tin">
+                                        Bỏ lưu
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5 candidate-empty-state">
+                <div class="display-5 text-muted mb-3"><i class="bi bi-bookmark-dash"></i></div>
+                <h6 class="text-muted fw-normal">Bạn chưa lưu tin tuyển dụng nào.</h6>
+                <div class="mt-3">
+                    <a href="@Url.Action("Index", "Job")" class="btn btn-sm btn-primary">Khám phá việc làm</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/candidate/saved-job.js"></script>
+}

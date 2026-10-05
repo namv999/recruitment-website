@@ -1,0 +1,109 @@
+﻿@model recruitment_website.Models.Application.ApplicationDetailViewModel
+
+@{
+    ViewBag.Title = "Chi tiết đơn ứng tuyển - " + Model.JobTitle;
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/application/application.css" />
+}
+
+<div class="container py-2 app-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="@Url.Action("Index", "Application")" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+
+        @if (Model.CanWithdraw)
+        {
+            <form method="post" action="@Url.Action("Withdraw", "Application")" class="app-withdraw-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.ApplicationId" />
+                <button type="submit" class="btn btn-outline-danger btn-sm">Rút đơn ứng tuyển</button>
+            </form>
+        }
+    </div>
+
+    <div class="row g-4">
+        <!-- Cột Trái: Thông tin Đơn & Thư giới thiệu -->
+        <div class="col-12 col-lg-7">
+            <div class="card p-4 shadow-sm candidate-card mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">
+                            <a href="@Url.Action("Details", "Job", new { id = Model.JobId })" class="text-decoration-none text-dark">
+                                @Model.JobTitle
+                            </a>
+                        </h4>
+                        <p class="text-muted mb-0"><i class="bi bi-building me-1"></i>@Model.CompanyName</p>
+                    </div>
+                    <div>
+                        @Html.Partial("_ApplicationStatusBadge", Model.Status, new ViewDataDictionary { { "StatusLabel", Model.StatusLabel } })
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                <div class="row g-3 small">
+                    <div class="col-12 col-md-6">
+                        <strong>CV ứng tuyển:</strong> @Model.CvTitle
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <strong>Thời gian nộp:</strong> @Model.AppliedAt.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <strong>Cập nhật gần nhất:</strong> @Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.CoverLetter))
+            {
+                <div class="card p-4 shadow-sm candidate-card">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Thư giới thiệu</h5>
+                    <p class="text-muted mb-0 text-break" style="white-space: pre-line;">@Model.CoverLetter</p>
+                </div>
+            }
+        </div>
+
+        <!-- Cột Phải: Lịch sử Trạng thái (Timeline) -->
+        <div class="col-12 col-lg-5">
+            <div class="card p-4 shadow-sm candidate-card">
+                <h5 class="fw-bold mb-4 border-bottom pb-2">Lịch sử trạng thái</h5>
+
+                @if (Model.History != null && Model.History.Any())
+                {
+                    <ul class="app-timeline">
+                        @foreach (var item in Model.History)
+                        {
+                            <li class="app-timeline-item">
+                                <div class="app-timeline-badge"></div>
+                                <div class="app-timeline-panel">
+                                    <div class="fw-bold small">
+                                        @if (string.IsNullOrEmpty(item.FromStatusLabel))
+                                        {
+                                            <span>Đã nộp hồ sơ</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.FromStatusLabel &rarr; @item.ToStatusLabel</span>
+                                        }
+                                    </div>
+                                    <div class="text-muted candidate-extra-small">@item.ChangedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có thông tin lịch sử.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/application/application.js"></script>
+}

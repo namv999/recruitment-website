@@ -1,9 +1,10 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Content/css/application/application.css
    Module: Applications & Status Tracking
    Rules: Prefix classes with .app- (CONVENTIONS.md)
    ========================================================================== */
 
+/* --- Status Badges --- */
 .app-status-badge {
     display: inline-flex;
     align-items: center;
@@ -11,7 +12,7 @@
     font-size: 0.8rem;
     font-weight: 600;
     padding: 0.3rem 0.75rem;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-full, 9999px);
 }
 
 .app-status-applied {
@@ -48,4 +49,68 @@
     background-color: #fef2f2;
     color: #b91c1c;
     border: 1px solid #fecaca;
+}
+
+/* Bổ sung trạng thái Rút đơn (Withdrawn) */
+.app-status-withdrawn {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+/* --- Tùy chọn CV trong Form Apply --- */
+.app-cv-option {
+    transition: all var(--transition-normal, 0.2s ease-in-out);
+    background-color: var(--color-surface, #ffffff);
+}
+
+    .app-cv-option:hover {
+        border-color: var(--color-primary, #0d6efd) !important;
+        background-color: var(--color-bg-light, #f8fafc);
+    }
+
+/* --- Timeline Lịch sử Trạng thái (Details.cshtml) --- */
+.app-timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+    .app-timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 11px;
+        width: 2px;
+        background: var(--color-border, #e2e8f0);
+    }
+
+.app-timeline-item {
+    margin-bottom: 1.25rem;
+    position: relative;
+    padding-left: 32px;
+}
+
+    .app-timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+.app-timeline-badge {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full, 50%);
+    background: var(--color-primary, #2563eb);
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    border: 2px solid #ffffff;
+}
+
+.app-timeline-panel {
+    background-color: var(--color-bg-light, #f8fafc);
+    border: 1px solid var(--color-border, #e2e8f0);
+    border-radius: var(--radius-md, 8px);
+    padding: 0.75rem 1rem;
 }

@@ -4,23 +4,23 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="a24c2f1177084179ad227ca3419abdfc" Name="Diagram1" ZoomLevel="25">
-        <EntityTypeShape EntityType="recruitment_dbModel.application_status_history" Width="1.5" PointX="3" PointY="16.625" IsExpanded="true" />
+      <Diagram DiagramId="a24c2f1177084179ad227ca3419abdfc" Name="Diagram1" ZoomLevel="37">
+        <EntityTypeShape EntityType="recruitment_dbModel.application_status_history" Width="1.5" PointX="10.5" PointY="10.5" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.applications" Width="1.5" PointX="7.5" PointY="26.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.candidate_educations" Width="1.5" PointX="5.25" PointY="23.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidate_educations" Width="1.5" PointX="20.125" PointY="23.375" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.candidate_experiences" Width="1.5" PointX="5.25" PointY="26.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.candidate_skills" Width="1.5" PointX="5.25" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.candidate_skills" Width="1.5" PointX="25.125" PointY="20.625" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.candidates" Width="1.5" PointX="3" PointY="20.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.companies" Width="1.5" PointX="6.75" PointY="11.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.company_members" Width="1.5" PointX="6" PointY="16.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.companies" Width="1.5" PointX="10.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.company_members" Width="1.5" PointX="27.25" PointY="9.625" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.cvs" Width="1.5" PointX="5.25" PointY="33.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.job_categories" Width="1.5" PointX="6.75" PointY="8.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.job_skills" Width="1.5" PointX="11.25" PointY="16.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.jobs" Width="1.5" PointX="9" PointY="14.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.saved_jobs" Width="1.5" PointX="8.25" PointY="22.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.skill_aliases" Width="1.5" PointX="11.25" PointY="5" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.skill_categories" Width="1.5" PointX="6.75" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="recruitment_dbModel.skills" Width="1.5" PointX="9" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.job_categories" Width="1.5" PointX="20.375" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.job_skills" Width="1.5" PointX="40" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.jobs" Width="1.5" PointX="14.875" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.saved_jobs" Width="1.5" PointX="30.375" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skill_aliases" Width="1.5" PointX="27.25" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skill_categories" Width="1.5" PointX="13.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="recruitment_dbModel.skills" Width="1.5" PointX="19.125" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="recruitment_dbModel.users" Width="1.5" PointX="0.75" PointY="18.25" IsExpanded="true" />
         <AssociationConnector Association="recruitment_dbModel.FK__applicati__appli__339FAB6E" ManuallyRouted="false" />
