@@ -1,0 +1,51 @@
+@model recruitment_website.Models.Job.JobEditViewModel
+@{
+    ViewBag.Title = "Sửa tin tuyển dụng";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/shared/skill-selector.css?v=2" />
+    <link rel="stylesheet" href="~/Content/css/job/job.css?v=2" />
+}
+
+<div class="container py-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("MyJobs", "Job")">Quản lý tin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Sửa tin</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4 d-flex flex-wrap align-items-center gap-3">
+        <h1 class="h3 fw-bold mb-0">Sửa tin tuyển dụng</h1>
+        <span class="job-status-badge @("job-status-" + Model.CurrentStatus)">@Model.CurrentStatusLabel</span>
+    </div>
+
+    @if (Model.WillBeReviewedAgain)
+    {
+        <div class="alert alert-warning" role="status">
+            Tin này đang hiển thị công khai hoặc đang tạm dừng. Sau khi lưu thay đổi, tin sẽ chuyển về trạng thái <strong>Chờ duyệt</strong> và chỉ hiển thị công khai lại khi Admin duyệt.
+        </div>
+    }
+
+    @using (Html.BeginForm("Edit", "Job", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+        @Html.Partial("_JobForm", Model)
+
+        <div class="d-flex justify-content-end gap-2 mb-4">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Details", "Job", new { id = Model.Id })">Hủy</a>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
+    }
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/shared/skill-selector.js?v=2"></script>
+    <script src="~/Scripts/job/job.js?v=2"></script>
+}

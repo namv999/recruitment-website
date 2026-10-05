@@ -1,0 +1,109 @@
+@model List<recruitment_website.Models.Job.JobManageItemViewModel>
+@{
+    ViewBag.Title = "Quản lý tin tuyển dụng";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/job/job.css" />
+}
+
+<div class="container py-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản lý tin</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Quản lý tin tuyển dụng</h1>
+            <p class="text-muted mb-0">Tất cả tin của công ty bạn, kể cả tin đang chờ duyệt hoặc đã đóng.</p>
+        </div>
+        <a class="btn btn-primary" href="@Url.Action("Create", "Job")">Đăng tin mới</a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="bento-card p-5 text-center">
+            <h2 class="h5 fw-bold">Bạn chưa đăng tin nào</h2>
+            <p class="text-muted mb-3">Đăng tin đầu tiên để bắt đầu nhận hồ sơ ứng viên.</p>
+            <div><a class="btn btn-primary" href="@Url.Action("Create", "Job")">Đăng tin tuyển dụng</a></div>
+        </div>
+    }
+    else
+    {
+        <div class="bento-card p-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="ps-4">Tin tuyển dụng</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" class="text-end">Lượt xem</th>
+                            <th scope="col" class="text-end">Đơn ứng tuyển</th>
+                            <th scope="col">Hạn nộp</th>
+                            <th scope="col" class="text-end pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <a class="job-manage-title" href="@Url.Action("Details", "Job", new { id = item.Id })">@item.Title</a>
+                                    <div class="small text-muted">Tạo ngày @item.CreatedAt.ToString("dd/MM/yyyy") &middot; Cần tuyển @item.Headcount người</div>
+                                </td>
+                                <td><span class="job-status-badge @("job-status-" + item.Status)">@item.StatusLabel</span></td>
+                                <td class="text-end">@item.ViewCount</td>
+                                <td class="text-end">@item.ApplicationCount</td>
+                                <td>@(item.ExpiresAt.HasValue ? item.ExpiresAt.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                <td class="pe-4">
+                                    <div class="job-manage-actions">
+                                        <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Details", "Job", new { id = item.Id })">Xem</a>
+
+                                        @if (item.CanEdit)
+                                        {
+                                            <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Edit", "Job", new { id = item.Id })">Sửa</a>
+                                        }
+
+                                        @if (item.CanPause)
+                                        {
+                                            using (Html.BeginForm("Pause", "Job", new { id = item.Id }, FormMethod.Post, new { data_confirm = "Tạm dừng tin này? Tin sẽ không còn hiển thị công khai." }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-secondary btn-sm">Tạm dừng</button>
+                                            }
+                                        }
+
+                                        @if (item.CanResume)
+                                        {
+                                            using (Html.BeginForm("Resume", "Job", new { id = item.Id }, FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-success btn-sm">Mở lại</button>
+                                            }
+                                        }
+
+                                        @if (item.CanClose)
+                                        {
+                                            using (Html.BeginForm("Close", "Job", new { id = item.Id }, FormMethod.Post, new { data_confirm = "Đóng tin này? Sau khi đóng sẽ không thể mở lại hoặc chỉnh sửa." }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Đóng tin</button>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script src="~/Scripts/job/job.js"></script>
+}
