@@ -1,0 +1,116 @@
+﻿@model recruitment_website.Models.Candidate.CandidateSkillsViewModel
+@using recruitment_website.Models.Candidate
+
+@{
+    ViewBag.Title = "Kỹ năng của tôi";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/candidate/candidate.css" />
+    <link rel="stylesheet" href="~/Content/css/shared/skill-selector.css" />
+}
+
+@section scripts {
+    <script src="~/Scripts/shared/skill-selector.js"></script>
+}
+
+<div class="container py-2">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Profile", "Candidate")">Hồ sơ của tôi</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Kỹ năng</li>
+        </ol>
+    </nav>
+
+    <!-- Header Page -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Kỹ năng của tôi</h2>
+            <p class="text-muted mb-0">Cập nhật danh sách kỹ năng và trình độ để nhà tuyển dụng dễ đánh giá hồ sơ.</p>
+        </div>
+        <a href="@Url.Action("Profile", "Candidate")" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại hồ sơ
+        </a>
+    </div>
+
+    <!-- Khối 1: Chọn kỹ năng -->
+    <div class="bento-card mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2"></i>Chọn kỹ năng</h5>
+
+        @using (Html.BeginForm("SaveSkills", "Candidate", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Partial("_SkillSelector", Model.SkillSelector)
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted fs-7">
+                    <i class="bi bi-info-circle me-1"></i>Kỹ năng mới thêm sẽ có mức 1 và 0 năm. Hãy chỉnh ở bảng bên dưới.
+                </small>
+                <button type="submit" class="btn btn-primary">Lưu danh sách kỹ năng</button>
+            </div>
+        }
+    </div>
+
+    <!-- Khối 2: Mức độ thành thạo -->
+    <div class="bento-card">
+        <h5 class="fw-bold mb-3"><i class="bi bi-sliders me-2"></i>Mức độ thành thạo & Kinh nghiệm</h5>
+
+        @if (Model.Items != null && Model.Items.Count > 0)
+        {
+            using (Html.BeginForm("UpdateSkillLevels", "Candidate", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Kỹ năng</th>
+                                <th scope="col" style="min-width: 220px;">Mức thành thạo</th>
+                                <th scope="col" style="max-width: 160px;">Số năm kinh nghiệm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Items.Count; i++)
+                            {
+                                var item = Model.Items[i];
+                                <tr>
+                                    <td class="fw-semibold">
+                                        @item.SkillName
+                                        <input type="hidden" name="Items[@i].SkillId" value="@item.SkillId" />
+                                    </td>
+                                    <td>
+                                        <select name="Items[@i].Proficiency" class="form-select form-select-sm">
+                                            @for (int lv = 1; lv <= 5; lv++)
+                                            {
+                                                <option value="@lv" @(item.Proficiency == lv ? "selected" : "")>
+                                                    @lv - @CandidateSkillRowViewModel.LevelLabel(lv)
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td style="max-width:160px">
+                                        <input type="number" name="Items[@i].YearsExperience" value="@item.YearsText"
+                                               min="0" max="50" step="0.5" class="form-control form-control-sm" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-primary">Lưu mức độ</button>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-4 candidate-empty-state">
+                <i class="bi bi-award display-5 text-muted d-block mb-2"></i>
+                <p class="text-muted mb-0">Bạn chưa chọn kỹ năng nào. Hãy chọn kỹ năng ở khối bên trên và bấm "Lưu danh sách kỹ năng".</p>
+            </div>
+        }
+    </div>
+</div>

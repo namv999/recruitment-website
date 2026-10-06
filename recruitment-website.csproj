@@ -250,6 +250,8 @@
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SavedJob\SavedJobItemViewModel.cs" />
+    <Compile Include="Models\Shared\PaginationViewModel.cs" />
+    <Compile Include="Models\Shared\SkillSelectorViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -348,6 +350,7 @@
     <Content Include="Views\SavedJob\Index.cshtml" />
     <Content Include="Views\Application\ByJob.cshtml" />
     <Content Include="Views\Application\Review.cshtml" />
+    <Content Include="Views\Candidate\Skills.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
