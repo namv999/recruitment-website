@@ -21,6 +21,7 @@ namespace recruitment_website.Models.Candidate
 
         public List<ExperienceItemViewModel> Experiences { get; set; } = new List<ExperienceItemViewModel>();
         public List<EducationItemViewModel> Educations { get; set; } = new List<EducationItemViewModel>();
+        public List<CandidateSkillRowViewModel> Skills { get; set; } = new List<CandidateSkillRowViewModel>();
     }
 
     public class ExperienceItemViewModel

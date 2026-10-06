@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -8,6 +10,7 @@ using recruitment_website.Constants;
 using recruitment_website.DAL;
 using recruitment_website.Filters;
 using recruitment_website.Models.Candidate;
+using recruitment_website.Models.Shared;
 
 namespace recruitment_website.Controllers
 {
@@ -18,6 +21,7 @@ namespace recruitment_website.Controllers
 
         private static readonly string[] AllowedCvExtensions = { ".pdf", ".doc", ".docx" };
         private const int MaxCvSizeBytes = 3 * 1024 * 1024; // 3 MB (Web.config mặc định chặn request > 4 MB)
+        private const int MaxSkills = 30;
 
         // ===================== HỒ SƠ CƠ BẢN =====================
 
@@ -30,6 +34,7 @@ namespace recruitment_website.Controllers
             var vm = new CandidateProfileViewModel
             {
                 Id = candidate.id,
+                Skills = LoadSkillRows(candidate.id),
                 Email = candidate.users != null ? candidate.users.email : null,
                 FullName = candidate.full_name,
                 Phone = candidate.phone,
@@ -427,6 +432,162 @@ namespace recruitment_website.Controllers
             string safeTitle = string.Concat(cv.title.Split(Path.GetInvalidFileNameChars()));
             Response.AppendHeader("Content-Disposition", "inline; filename=\"" + Url.Encode(safeTitle + ext) + "\"");
             return File(physicalPath, contentType);
+        }
+
+        // ===================== KỸ NĂNG =====================
+
+        // GET: Candidate/Skills
+        public ActionResult Skills()
+        {
+            var c = GetCurrentCandidate();
+            if (c == null) return RedirectToEditFirst();
+            return View(BuildSkillsViewModel(c.id));
+        }
+
+        // POST: Candidate/SaveSkills  — thay toàn bộ danh sách kỹ năng bằng tập được chọn
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SaveSkills(CandidateSkillSelectionForm model)
+        {
+            var c = GetCurrentCandidate();
+            if (c == null) return RedirectToEditFirst();
+
+            var selected = (model?.SelectedSkillIds ?? new List<int>()).Distinct().ToList();
+            if (selected.Count > MaxSkills)
+            {
+                TempData["Error"] = "Bạn chỉ có thể chọn tối đa " + MaxSkills + " kỹ năng.";
+                return RedirectToAction("Skills");
+            }
+
+            // Chỉ nhận id có thật trong bảng skills, không tin dữ liệu client
+            var validIds = _db.skills.Where(s => selected.Contains(s.id)).Select(s => s.id).ToList();
+            if (validIds.Count != selected.Count)
+            {
+                TempData["Error"] = "Có kỹ năng không hợp lệ, vui lòng thử lại.";
+                return RedirectToAction("Skills");
+            }
+
+            var existing = _db.candidate_skills.Where(cs => cs.candidate_id == c.id).ToList();
+            var existingIds = existing.Select(x => x.skill_id).ToList();
+
+            foreach (var cs in existing.Where(x => !validIds.Contains(x.skill_id)).ToList())
+                _db.candidate_skills.Remove(cs);
+
+            int added = 0;
+            foreach (var id in validIds.Where(i => !existingIds.Contains(i)))
+            {
+                // Kỹ năng mới: mức 1, 0 năm (khớp default của DB); ứng viên chỉnh ở bảng bên dưới
+                _db.candidate_skills.Add(new candidate_skills
+                {
+                    candidate_id = c.id,
+                    skill_id = id,
+                    proficiency = 1,
+                    years_experience = 0
+                });
+                added++;
+            }
+
+            c.updated_at = DateTime.Now;
+            _db.SaveChanges();
+
+            TempData["Success"] = added > 0
+                ? "Đã cập nhật kỹ năng. Hãy chỉnh mức thành thạo và số năm kinh nghiệm bên dưới."
+                : "Đã cập nhật danh sách kỹ năng.";
+            return RedirectToAction("Skills");
+        }
+
+        // POST: Candidate/UpdateSkillLevels — chỉnh mức và số năm của các kỹ năng đã có
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateSkillLevels(CandidateSkillLevelsForm model)
+        {
+            var c = GetCurrentCandidate();
+            if (c == null) return RedirectToEditFirst();
+
+            if (model == null || model.Items == null || model.Items.Count == 0)
+            {
+                TempData["Error"] = "Không có dữ liệu để lưu.";
+                return RedirectToAction("Skills");
+            }
+
+            var mine = _db.candidate_skills.Where(cs => cs.candidate_id == c.id).ToList();
+
+            // Kiểm tra toàn bộ trước, hợp lệ hết mới ghi (tránh lưu dở dang)
+            var parsed = new List<Tuple<candidate_skills, byte, decimal>>();
+            foreach (var item in model.Items)
+            {
+                var row = mine.FirstOrDefault(x => x.skill_id == item.SkillId);
+                if (row == null) continue; // không phải kỹ năng của mình -> bỏ qua
+
+                decimal years;
+                if (item.Proficiency < 1 || item.Proficiency > 5 || !TryParseYears(item.YearsExperience, out years))
+                {
+                    TempData["Error"] = "Mức thành thạo phải từ 1 đến 5 và số năm kinh nghiệm từ 0 đến 50.";
+                    return RedirectToAction("Skills");
+                }
+                parsed.Add(Tuple.Create(row, (byte)item.Proficiency, years));
+            }
+
+            foreach (var p in parsed)
+            {
+                p.Item1.proficiency = p.Item2;
+                p.Item1.years_experience = p.Item3;
+            }
+            c.updated_at = DateTime.Now;
+            _db.SaveChanges();
+
+            TempData["Success"] = "Đã lưu mức độ kỹ năng.";
+            return RedirectToAction("Skills");
+        }
+
+        private CandidateSkillsViewModel BuildSkillsViewModel(long candidateId)
+        {
+            var rows = LoadSkillRows(candidateId);
+
+            var options = _db.skills
+                .OrderBy(s => s.name)
+                .Select(s => new { s.id, s.name, Category = s.skill_categories.name })
+                .ToList()
+                .Select(s => new SkillOptionViewModel { Id = s.id, Name = s.name, CategoryName = s.Category })
+                .ToList();
+
+            return new CandidateSkillsViewModel
+            {
+                Items = rows,
+                SkillSelector = new SkillSelectorViewModel
+                {
+                    FieldName = "SelectedSkillIds",
+                    Options = options,
+                    SelectedIds = rows.Select(r => r.SkillId).ToList()
+                }
+            };
+        }
+
+        private List<CandidateSkillRowViewModel> LoadSkillRows(long candidateId)
+        {
+            return _db.candidate_skills
+                .Where(cs => cs.candidate_id == candidateId)
+                .OrderBy(cs => cs.skills.name)
+                .Select(cs => new { cs.skill_id, cs.skills.name, cs.proficiency, cs.years_experience })
+                .ToList()
+                .Select(x => new CandidateSkillRowViewModel
+                {
+                    SkillId = x.skill_id,
+                    SkillName = x.name,
+                    Proficiency = x.proficiency,
+                    YearsText = x.years_experience.ToString("0.#", CultureInfo.InvariantCulture)
+                }).ToList();
+        }
+
+        // Chấp nhận "1.5" lẫn "1,5"; để trống = 0
+        private static bool TryParseYears(string text, out decimal years)
+        {
+            years = 0;
+            if (string.IsNullOrWhiteSpace(text)) return true;
+            text = text.Trim().Replace(',', '.');
+            if (!decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out years)) return false;
+            years = Math.Round(years, 1);
+            return years >= 0 && years <= 50;
         }
 
         // ===================== HELPER =====================
