@@ -1,9 +1,16 @@
-﻿// Vanilla JS/jQuery hỗ trợ tương tác Module Application
+﻿/* ==========================================================================
+   Scripts/application/application.js
+   Module: Applications & Status Tracking (Employer & Candidate)
+   ========================================================================== */
+
 (function () {
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
-        // 1. Đếm ký tự Thư giới thiệu
+
+        // ------------------------------------------------------------------
+        // 1. Phía Ứng viên: Đếm ký tự Thư giới thiệu trong Form Apply
+        // ------------------------------------------------------------------
         var coverLetterInput = document.getElementById('coverLetterInput');
         var coverLetterCounter = document.getElementById('coverLetterCounter');
 
@@ -16,18 +23,22 @@
             updateCounter();
         }
 
-        // 2. Chặn bấm đúp form Apply
+        // ------------------------------------------------------------------
+        // 2. Phía Ứng viên: Chặn bấm đúp (Double Submit) Form Apply
+        // ------------------------------------------------------------------
         var applyForm = document.getElementById('applyForm');
         var applySubmitBtn = document.getElementById('applySubmitBtn');
 
         if (applyForm && applySubmitBtn) {
             applyForm.addEventListener('submit', function () {
                 applySubmitBtn.disabled = true;
-                applySubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
+                applySubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang gửi...';
             });
         }
 
-        // 3. Confirm Rút đơn
+        // ------------------------------------------------------------------
+        // 3. Phía Ứng viên: Confirm Rút đơn ứng tuyển
+        // ------------------------------------------------------------------
         var withdrawForms = document.querySelectorAll('.app-withdraw-form');
         withdrawForms.forEach(function (form) {
             form.addEventListener('submit', function (e) {
@@ -36,5 +47,19 @@
                 }
             });
         });
+
+        // ------------------------------------------------------------------
+        // 4. Phía Nhà tuyển dụng: Confirm các hành động cảnh báo (vd: Từ chối hồ sơ)
+        // ------------------------------------------------------------------
+        var confirmButtons = document.querySelectorAll('button[data-confirm]');
+        confirmButtons.forEach(function (button) {
+            button.addEventListener('click', function (e) {
+                var message = this.getAttribute('data-confirm');
+                if (message && !confirm(message)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
     });
 })();
