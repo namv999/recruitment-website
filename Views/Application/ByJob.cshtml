@@ -1,0 +1,114 @@
+﻿@model recruitment_website.Models.Application.JobApplicantsViewModel
+
+@{
+    ViewBag.Title = "Hồ sơ ứng viên - " + Model.JobTitle;
+}
+
+<div class="container py-2">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("MyJobs", "Job")">Quản lý tin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.JobTitle</li>
+        </ol>
+    </nav>
+
+    <!-- Header Page -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Hồ sơ ứng viên</h2>
+            <p class="text-muted mb-0">Tin tuyển dụng: <strong>@Model.JobTitle</strong> (@Model.TotalCount ứng viên)</p>
+        </div>
+    </div>
+
+    <!-- Tab bộ lọc trạng thái -->
+    @if (Model.StatusFilters != null && Model.StatusFilters.Any())
+    {
+        <div class="app-status-tabs mb-3 d-flex flex-wrap gap-2">
+            @foreach (var f in Model.StatusFilters)
+            {
+                var activeClass = f.IsActive ? "active btn-primary text-white" : "btn-outline-secondary";
+                <a href="@Url.Action("ByJob", "Application", new { jobId = Model.JobId, status = f.Value })"
+                   class="btn btn-sm rounded-pill @activeClass">
+                    @f.Label <span class="badge bg-light text-dark ms-1">@f.Count</span>
+                </a>
+            }
+        </div>
+    }
+
+    <!-- Bento Card chứa Table -->
+    <div class="bento-card">
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Ứng viên</th>
+                            <th scope="col">Thành phố</th>
+                            <th scope="col">Kinh nghiệm</th>
+                            <th scope="col">Ngày nộp</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" class="text-end">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-bold text-dark">
+                                                @item.CandidateName
+                                                @if (item.HasNote)
+                                                {
+                                                    <i class="bi bi-sticky text-warning ms-1" title="Có ghi chú nội bộ"></i>
+                                                }
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(item.Headline))
+                                            {
+                                                <small class="text-muted d-block">@item.Headline</small>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@(string.IsNullOrEmpty(item.City) ? "---" : item.City)</td>
+                                <td>@item.TotalExperienceYears năm</td>
+                                <td>@item.AppliedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @Html.Partial("_ApplicationStatusBadge", item.Status, new ViewDataDictionary { { "StatusLabel", item.StatusLabel } })
+                                </td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Review", "Application", new { id = item.ApplicationId })"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Xem hồ sơ
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
+                @if (!string.IsNullOrEmpty(Model.CurrentStatus))
+                {
+                    <p class="text-muted fs-5">Không có hồ sơ nào ở trạng thái này.</p>
+                    <a href="@Url.Action("ByJob", "Application", new { jobId = Model.JobId })" class="btn btn-sm btn-secondary">
+                        Xem tất cả hồ sơ
+                    </a>
+                }
+                else
+                {
+                    <p class="text-muted fs-5">Chưa có ứng viên nào nộp hồ sơ cho tin tuyển dụng này.</p>
+                }
+            </div>
+        }
+    </div>
+</div>

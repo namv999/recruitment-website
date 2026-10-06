@@ -1,0 +1,243 @@
+﻿@model recruitment_website.Models.Application.ApplicationReviewViewModel
+
+@{
+    ViewBag.Title = "Đánh giá hồ sơ - " + Model.CandidateName;
+}
+
+<div class="container py-2">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("MyJobs", "Job")">Quản lý tin</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("ByJob", "Application", new { jobId = Model.JobId })">@Model.JobTitle</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.CandidateName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Cột trái: Thông tin ứng viên (col-lg-8) -->
+        <div class="col-lg-8">
+            <!-- Khối 1: Thông tin cơ bản -->
+            <div class="bento-card mb-4">
+                <h4 class="fw-bold mb-1">@Model.CandidateName</h4>
+                @if (!string.IsNullOrEmpty(Model.Headline))
+                {
+                    <p class="text-muted mb-3">@Model.Headline</p>
+                }
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Email</small>
+                        <a href="mailto:@Model.Email" class="text-decoration-none fw-semibold">@Model.Email</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Số điện thoại</small>
+                        <span class="fw-semibold">@(string.IsNullOrEmpty(Model.Phone) ? "Chưa cập nhật" : Model.Phone)</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Thành phố</small>
+                        <span class="fw-semibold">@(string.IsNullOrEmpty(Model.City) ? "Chưa cập nhật" : Model.City)</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Học vấn cao nhất</small>
+                        <span class="fw-semibold">@(string.IsNullOrEmpty(Model.HighestEducationLabel) ? "Chưa cập nhật" : Model.HighestEducationLabel)</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Lương mong muốn</small>
+                        <span class="fw-semibold">@(Model.ExpectedSalary.HasValue ? Model.ExpectedSalary.Value.ToString("N0") + " VND/tháng" : "Thỏa thuận")</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <small class="text-muted d-block">Tổng kinh nghiệm</small>
+                        <span class="fw-semibold">@Model.TotalExperienceYears năm</span>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Summary))
+                {
+                    <hr class="my-3" />
+                    <div>
+                        <small class="text-muted d-block mb-1">Tóm tắt bản thân</small>
+                        <p class="mb-0 text-secondary">@Model.Summary</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Khối 2: Thư giới thiệu -->
+            <div class="bento-card mb-4">
+                <h5 class="fw-bold mb-3">Thư giới thiệu</h5>
+                @if (!string.IsNullOrEmpty(Model.CoverLetter))
+                {
+                    <p class="mb-0 text-secondary style-preserve-line">@Model.CoverLetter</p>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có thư giới thiệu</p>
+                }
+            </div>
+
+            <!-- Khối 3: Kỹ năng -->
+            <div class="bento-card mb-4">
+                <h5 class="fw-bold mb-3">Kỹ năng</h5>
+                @if (Model.Skills != null && Model.Skills.Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var skill in Model.Skills)
+                        {
+                            <span class="badge bg-light text-dark border p-2">
+                                <span class="fw-bold">@skill.Name</span>
+                                <span class="text-muted ms-1">(Mức @skill.Proficiency/5 - @skill.YearsExperience năm)</span>
+                            </span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có kỹ năng nào</p>
+                }
+            </div>
+
+            <!-- Khối 4: Kinh nghiệm làm việc -->
+            <div class="bento-card mb-4">
+                <h5 class="fw-bold mb-3">Kinh nghiệm làm việc</h5>
+                @if (Model.Experiences != null && Model.Experiences.Any())
+                {
+                    <div class="app-timeline">
+                        @foreach (var exp in Model.Experiences)
+                        {
+                            <div class="mb-3 border-bottom pb-3 last-no-border">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold mb-1">@exp.JobTitle</h6>
+                                    <small class="text-muted">
+                                        @exp.StartDate.ToString("MM/yyyy") - @(exp.EndDate.HasValue ? exp.EndDate.Value.ToString("MM/yyyy") : "Hiện tại")
+                                    </small>
+                                </div>
+                                <div class="text-primary small mb-2">@exp.CompanyName</div>
+                                @if (!string.IsNullOrEmpty(exp.Description))
+                                {
+                                    <p class="text-secondary small mb-0">@exp.Description</p>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có kinh nghiệm làm việc</p>
+                }
+            </div>
+
+            <!-- Khối 5: Học vấn -->
+            <div class="bento-card mb-4">
+                <h5 class="fw-bold mb-3">Học vấn</h5>
+                @if (Model.Educations != null && Model.Educations.Any())
+                {
+                    <div>
+                        @foreach (var edu in Model.Educations)
+                        {
+                            <div class="mb-3 border-bottom pb-3 last-no-border">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold mb-1">@edu.SchoolName</h6>
+                                    <small class="text-muted">@edu.StartYear - @(edu.EndYear.HasValue ? edu.EndYear.Value.ToString() : "Hiện tại")</small>
+                                </div>
+                                <p class="text-secondary small mb-0">
+                                    @edu.DegreeLabel - <strong>@edu.Major</strong>
+                                </p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có thông tin học vấn</p>
+                }
+            </div>
+        </div>
+
+        <!-- Cột phải: Thao tác & Lịch sử (col-lg-4) -->
+        <div class="col-lg-4">
+            <!-- 1. Trạng thái hiện tại & Nút CV -->
+            <div class="bento-card mb-4">
+                <small class="text-muted d-block mb-1">Trạng thái hiện tại</small>
+                <div class="mb-3">
+                    @Html.Partial("_ApplicationStatusBadge", Model.Status, new ViewDataDictionary { { "StatusLabel", Model.StatusLabel } })
+                </div>
+                <hr />
+                <a href="@Url.Action("DownloadCv", "Application", new { id = Model.Id })" class="btn btn-outline-primary w-100 btn-sm text-truncate">
+                    <i class="bi bi-download me-1"></i> Tải CV: @Model.CvTitle
+                </a>
+            </div>
+
+            <!-- 2. Khối đổi trạng thái -->
+            <div class="bento-card mb-4">
+                <h6 class="fw-bold mb-3">Đổi trạng thái hồ sơ</h6>
+                @if (Model.NextStatuses != null && Model.NextStatuses.Any())
+                {
+                    using (Html.BeginForm("ChangeStatus", "Application", FormMethod.Post, new { @class = "d-flex flex-wrap gap-2" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", Model.Id)
+                        foreach (var opt in Model.NextStatuses)
+                        {
+                            <button type="submit" name="newStatus" value="@opt.Value"
+                                    class="btn btn-sm @(opt.IsDanger ? "btn-outline-danger" : "btn-primary")"
+                                    @(opt.IsDanger ? "data-confirm=\"Từ chối hồ sơ này?\"" : "")>
+                                @opt.Label
+                            </button>
+                        }
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-secondary mb-0 small text-center">
+                        Đơn đã kết thúc, không thể đổi trạng thái.
+                    </div>
+                }
+            </div>
+
+            <!-- 3. Ghi chú nội bộ -->
+            <div class="bento-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">Ghi chú nội bộ</h6>
+                </div>
+                <p class="text-muted small mb-2">Chỉ nhà tuyển dụng thấy ghi chú này.</p>
+                @using (Html.BeginForm("SaveNote", "Application", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("id", Model.Id)
+                    <textarea name="note" class="form-control mb-2" rows="4" maxlength="2000" placeholder="Thêm ghi chú đánh giá ứng viên...">@Model.RecruiterNote</textarea>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm w-100">Lưu ghi chú</button>
+                }
+            </div>
+
+            <!-- 4. Lịch sử trạng thái -->
+            <div class="bento-card mb-4">
+                <h6 class="fw-bold mb-3">Lịch sử xử lý</h6>
+                @if (Model.History != null && Model.History.Any())
+                {
+                    <div class="app-history-timeline">
+                        @foreach (var h in Model.History)
+                        {
+                            <div class="app-history-item mb-2 pb-2 border-bottom last-no-border">
+                                <div class="small fw-semibold">
+                                    @if (!string.IsNullOrEmpty(h.FromLabel))
+                                    {
+                                        <span>@h.FromLabel</span> <i class="bi bi-arrow-right mx-1"></i>
+                                    }
+                                    <span class="text-primary">@h.ToLabel</span>
+                                </div>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    @h.ChangedAt.ToString("HH:mm dd/MM/yyyy")
+                                </small>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Chưa có lịch sử cập nhật</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

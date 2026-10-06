@@ -239,6 +239,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Application\ApplicationApplyViewModel.cs" />
+    <Compile Include="Models\Application\ApplicationEmployerViewModels.cs" />
     <Compile Include="Models\Application\ApplicationListViewModels.cs" />
     <Compile Include="Models\Candidate\CandidateEditViewModel.cs" />
     <Compile Include="Models\Candidate\CandidateProfileViewModel.cs" />
