@@ -314,11 +314,10 @@
     <Content Include="DAL\RecruitmentModel.edmx.diagram">
       <DependentUpon>RecruitmentModel.edmx</DependentUpon>
     </Content>
-    <None Include="ConnectionStrings.config" />
+    <Content Include="ConnectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\candidate\cv-upload.js" />
     <Content Include="Scripts\candidate\saved-job.js" />
-    <Content Include="ConnectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\job\job.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
