@@ -20,6 +20,13 @@ namespace recruitment_website.Constants
         public const string Candidate = "candidate";
     }
 
+    /// <summary>users.status</summary>
+    public static class UserStatus
+    {
+        public const string Active = "active";
+        public const string Inactive = "inactive";
+    }
+
     /// <summary>jobs.status — draft -> pending -> published -> paused/closed/expired</summary>
     public static class JobStatus
     {

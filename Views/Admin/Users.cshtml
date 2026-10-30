@@ -1,0 +1,218 @@
+@using recruitment_website.Constants
+@model recruitment_website.Models.Admin.AdminUsersViewModel
+@{
+    ViewBag.Title = "Quản lý tài khoản người dùng";
+    ViewBag.Subtitle = "Tìm kiếm, lọc và phân quyền trạng thái hoạt động cho tài khoản Ứng viên và Nhà tuyển dụng.";
+    ViewBag.ActiveTab = "Users";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Filter Card -->
+    <div class="admin-filter-card">
+        @using (Html.BeginForm("Users", "Admin", FormMethod.Get, new { @class = "row g-3 align-items-end" }))
+        {
+            <div class="col-12 col-md-5">
+                <label class="form-label small fw-semibold text-secondary">Tìm kiếm theo Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" name="keyword" class="form-control border-start-0 ps-0" placeholder="Nhập địa chỉ email..." value="@Model.Keyword" />
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <label class="form-label small fw-semibold text-secondary">Vai trò tài khoản</label>
+                <select name="role" class="form-select">
+                    <option value="">-- Tất cả vai trò --</option>
+                    <option value="@UserRole.Candidate" @(Model.Role == UserRole.Candidate ? "selected" : "")>Ứng viên (Candidate)</option>
+                    <option value="@UserRole.Employer" @(Model.Role == UserRole.Employer ? "selected" : "")>Nhà tuyển dụng (Employer)</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-2">
+                <label class="form-label small fw-semibold text-secondary">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="@UserStatus.Active" @(Model.Status == UserStatus.Active ? "selected" : "")>Hoạt động</option>
+                    <option value="@UserStatus.Inactive" @(Model.Status == UserStatus.Inactive ? "selected" : "")>Đã khóa</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel"></i> Lọc
+                </button>
+                @if (!string.IsNullOrEmpty(Model.Keyword) || !string.IsNullOrEmpty(Model.Role) || !string.IsNullOrEmpty(Model.Status))
+                {
+                    <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary" title="Đặt lại bộ lọc">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Table Card -->
+    <div class="admin-table-card">
+        <div class="admin-table-header">
+            <div>
+                <h2 class="h6 fw-bold mb-0 text-slate-800">Danh sách người dùng</h2>
+                <span class="small text-muted">Tổng cộng @Model.TotalItems.ToString("N0") tài khoản</span>
+            </div>
+        </div>
+
+        @if (Model.Users == null || Model.Users.Count == 0)
+        {
+            <div class="admin-empty-state">
+                <div class="admin-empty-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3 class="h6 fw-bold text-slate-800 mb-1">Không tìm thấy tài khoản phù hợp</h3>
+                <p class="text-muted small mb-3">Thử thay đổi từ khóa tìm kiếm hoặc làm mới bộ lọc phân loại.</p>
+                <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary btn-sm">Xóa bộ lọc</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table admin-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 70px;">ID</th>
+                            <th scope="col">Tài khoản (Email)</th>
+                            <th scope="col">Vai trò</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col">Ngày đăng ký</th>
+                            <th scope="col">Đăng nhập gần nhất</th>
+                            <th scope="col" class="text-end" style="width: 150px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td class="text-muted fw-semibold">#@user.Id</td>
+                                <td>
+                                    <div class="fw-semibold text-slate-900">@user.Email</div>
+                                </td>
+                                <td>
+                                    @if (user.Role == UserRole.Candidate)
+                                    {
+                                        <span class="badge-role badge-role-candidate">
+                                            <i class="bi bi-person me-1"></i>Ứng viên
+                                        </span>
+                                    }
+                                    else if (user.Role == UserRole.Employer)
+                                    {
+                                        <span class="badge-role badge-role-employer">
+                                            <i class="bi bi-building me-1"></i>Nhà tuyển dụng
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-role badge-role-admin">
+                                            <i class="bi bi-shield me-1"></i>Quản trị viên
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.Status == UserStatus.Active)
+                                    {
+                                        <span class="admin-status-badge admin-status-active">
+                                            <i class="bi bi-check-circle-fill"></i>Hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-status-badge admin-status-inactive">
+                                            <i class="bi bi-dash-circle-fill"></i>Đã khóa
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-secondary small">
+                                    @user.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="text-secondary small">
+                                    @(user.LastLoginAt.HasValue ? user.LastLoginAt.Value.ToString("dd/MM/yyyy HH:mm") : "—")
+                                </td>
+                                <td class="text-end">
+                                    @if (user.CanChangeStatus)
+                                    {
+                                        var isCurrentlyActive = user.Status == UserStatus.Active;
+                                        var confirmMessage = isCurrentlyActive
+                                            ? string.Format("Bạn có chắc chắn muốn khóa tài khoản {0}? Người dùng này sẽ không thể đăng nhập.", user.Email)
+                                            : string.Format("Mở khóa cho tài khoản {0}?", user.Email);
+
+                                        using (Html.BeginForm("ToggleUserStatus", "Admin", FormMethod.Post, new { @class = "d-inline-block", data_confirm = confirmMessage }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            if (isCurrentlyActive)
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Khóa tài khoản này">
+                                                    <i class="bi bi-lock-fill"></i> Khóa
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Mở khóa tài khoản này">
+                                                    <i class="bi bi-unlock-fill"></i> Mở khóa
+                                                </button>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border" title="Không thể thay đổi trạng thái tài khoản quản trị hoặc tài khoản cá nhân">
+                                            <i class="bi bi-shield-shaded me-1"></i>Cố định
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            if (Model.TotalPages > 1)
+            {
+                <div class="p-3 border-top">
+                    @{
+                        var paginationModel = new recruitment_website.Models.Shared.PaginationViewModel
+                        {
+                            Page = Model.Page,
+                            TotalPages = Model.TotalPages,
+                            Action = "Users",
+                            Controller = "Admin"
+                        };
+                        if (!string.IsNullOrWhiteSpace(Model.Keyword))
+                        {
+                            paginationModel.RouteValues["keyword"] = Model.Keyword;
+                        }
+                        if (!string.IsNullOrWhiteSpace(Model.Role))
+                        {
+                            paginationModel.RouteValues["role"] = Model.Role;
+                        }
+                        if (!string.IsNullOrWhiteSpace(Model.Status))
+                        {
+                            paginationModel.RouteValues["status"] = Model.Status;
+                        }
+                    }
+                    @Html.Partial("_Pagination", paginationModel)
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

@@ -38,6 +38,14 @@ namespace recruitment_website
             // Module: Auth Script
             bundles.Add(new ScriptBundle("~/bundles/auth").Include(
                       "~/Scripts/auth/auth.js"));
+
+            // Module: Admin Stylesheet
+            bundles.Add(new StyleBundle("~/bundles/admin-css").Include(
+                      "~/Content/css/admin/admin.css"));
+
+            // Module: Admin Script
+            bundles.Add(new ScriptBundle("~/bundles/admin").Include(
+                      "~/Scripts/admin/admin.js"));
         }
     }
 }

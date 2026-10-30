@@ -1,0 +1,193 @@
+@model recruitment_website.Models.Admin.AdminSkillsViewModel
+@{
+    ViewBag.Title = "Quản lý từ điển kỹ năng";
+    ViewBag.Subtitle = "Chuẩn hóa danh mục kỹ năng, theo dõi mức độ xuất hiện trong hồ sơ ứng viên và tin tuyển dụng.";
+    ViewBag.ActiveTab = "Skills";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Search & Action Toolbar -->
+    <div class="admin-filter-card">
+        <div class="row g-3 align-items-center justify-content-between">
+            <div class="col-12 col-md-6 col-lg-5">
+                @using (Html.BeginForm("Skills", "Admin", FormMethod.Get, new { @class = "d-flex gap-2" }))
+                {
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="keyword" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm kỹ năng..." value="@Model.Keyword" />
+                    </div>
+                    <button type="submit" class="btn btn-outline-secondary">Tìm</button>
+                    if (!string.IsNullOrEmpty(Model.Keyword))
+                    {
+                        <a href="@Url.Action("Skills", "Admin")" class="btn btn-outline-secondary" title="Đặt lại">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    }
+                }
+            </div>
+
+            <div class="col-12 col-md-auto">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSkillForm" data-action="add-skill">
+                    <i class="bi bi-plus-lg"></i> Thêm kỹ năng mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Table Card -->
+    <div class="admin-table-card">
+        <div class="admin-table-header">
+            <div>
+                <h2 class="h6 fw-bold mb-0 text-slate-800">Danh mục kỹ năng chuyên môn</h2>
+                <span class="small text-muted">Tổng cộng @Model.Skills.Count kỹ năng</span>
+            </div>
+        </div>
+
+        @if (Model.Skills == null || Model.Skills.Count == 0)
+        {
+            <div class="admin-empty-state">
+                <div class="admin-empty-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+                <h3 class="h6 fw-bold text-slate-800 mb-1">Không tìm thấy kỹ năng nào</h3>
+                <p class="text-muted small mb-3">Chưa có kỹ năng phù hợp với từ khóa hoặc hệ thống chưa có dữ liệu kỹ năng.</p>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSkillForm" data-action="add-skill">
+                    <i class="bi bi-plus-lg"></i> Tạo kỹ năng đầu tiên
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table admin-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 70px;">ID</th>
+                            <th scope="col">Tên kỹ năng</th>
+                            <th scope="col">Nhóm kỹ năng</th>
+                            <th scope="col" class="text-center">Hồ sơ ứng viên</th>
+                            <th scope="col" class="text-center">Tin tuyển dụng</th>
+                            <th scope="col" class="text-end" style="width: 160px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var skill in Model.Skills)
+                        {
+                            var totalUsage = skill.CandidateUsageCount + skill.JobUsageCount;
+                            <tr>
+                                <td class="text-muted fw-semibold">#@skill.Id</td>
+                                <td>
+                                    <span class="fw-bold text-slate-900">@skill.Name</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-secondary border">
+                                        <i class="bi bi-folder2 me-1"></i>@skill.CategoryName
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-primary border">
+                                        @skill.CandidateUsageCount hồ sơ
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-success border">
+                                        @skill.JobUsageCount tin
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <!-- Nút Sửa -->
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal" data-bs-target="#modalSkillForm"
+                                                data-action="edit-skill"
+                                                data-id="@skill.Id"
+                                                data-name="@skill.Name"
+                                                data-category-id="@(skill.CategoryId.HasValue ? skill.CategoryId.Value.ToString() : "")"
+                                                title="Chỉnh sửa kỹ năng">
+                                            <i class="bi bi-pencil-square"></i> Sửa
+                                        </button>
+
+                                        <!-- Form Xóa -->
+                                        @using (Html.BeginForm("DeleteSkill", "Admin", FormMethod.Post, new {
+                                            @class = "d-inline-block",
+                                            data_confirm = totalUsage > 0
+                                                ? string.Format("CẢNH BÁO: Kỹ năng \"{0}\" đang được liên kết với {1} hồ sơ ứng viên và {2} tin tuyển dụng. Theo quy định, kỹ năng đang có liên kết sẽ không thể xóa. Bạn vẫn muốn gửi yêu cầu?", skill.Name, skill.CandidateUsageCount, skill.JobUsageCount)
+                                                : string.Format("Bạn có chắc chắn muốn xóa kỹ năng \"{0}\"?", skill.Name)
+                                        }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@skill.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="@(totalUsage > 0 ? "Kỹ năng đang có liên kết dữ liệu" : "Xóa kỹ năng")">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal Thêm / Chỉnh sửa Kỹ năng -->
+<div class="modal fade" id="modalSkillForm" tabindex="-1" aria-labelledby="modalSkillTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-modal-content">
+            @using (Html.BeginForm("SaveSkill", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="skillId" value="" />
+
+                <div class="modal-header admin-modal-header">
+                    <h5 class="modal-title fw-bold" id="modalSkillTitle">Thêm kỹ năng mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body admin-modal-body">
+                    <div class="mb-3">
+                        <label for="skillName" class="form-label fw-semibold">
+                            Tên kỹ năng <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" name="Name" id="skillName" class="form-control" placeholder="VD: C#, ReactJS, SQL Server..." maxlength="100" required />
+                        <div class="form-text">Tối đa 100 ký tự, không phân biệt hoa thường và không được trùng lặp.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="skillCategoryId" class="form-label fw-semibold">Nhóm kỹ năng</label>
+                        <select name="CategoryId" id="skillCategoryId" class="form-select">
+                            <option value="">-- Chưa phân nhóm (Tùy chọn) --</option>
+                            @if (Model.Categories != null)
+                            {
+                                foreach (var cat in Model.Categories)
+                                {
+                                    <option value="@cat.Value">@cat.Text</option>
+                                }
+                            }
+                        </select>
+                        <div class="form-text">Giúp phân loại và gom nhóm kỹ năng trên giao diện tìm kiếm việc làm.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer admin-modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Lưu kỹ năng</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

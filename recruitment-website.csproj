@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -160,6 +160,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Constants\AppConstants.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CandidateController.cs" />
@@ -240,6 +241,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Application\ApplicationApplyViewModel.cs" />
+    <Compile Include="Models\Admin\AdminViewModels.cs" />
     <Compile Include="Models\Application\ApplicationListViewModels.cs" />
     <Compile Include="Models\Candidate\CandidateEditViewModel.cs" />
     <Compile Include="Models\Candidate\CandidateProfileViewModel.cs" />
@@ -374,6 +376,15 @@
     <Content Include="Views\Shared\_JobCard.cshtml" />
     <Content Include="Views\Shared\_Pagination.cshtml" />
     <Content Include="Views\Shared\_SkillSelector.cshtml" />
+    <Content Include="Content\css\admin\admin.css" />
+    <Content Include="Scripts\admin\admin.js" />
+    <Content Include="Views\Admin\_AdminNav.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\Companies.cshtml" />
+    <Content Include="Views\Admin\Skills.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
+    <Content Include="Views\Admin\PendingJobs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

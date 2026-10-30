@@ -1,0 +1,269 @@
+@model recruitment_website.Models.Admin.AdminCategoriesViewModel
+@{
+    ViewBag.Title = "Quản lý danh mục ngành nghề & nhóm kỹ năng";
+    ViewBag.Subtitle = "Quản lý phân loại nhóm kỹ năng và danh mục ngành nghề tuyển dụng trong hệ thống.";
+    ViewBag.ActiveTab = "Categories";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Bento 2-Column Layout -->
+    <div class="row g-4">
+        <!-- Cột 1: Nhóm Kỹ năng (Skill Categories) -->
+        <div class="col-12 col-lg-6">
+            <div class="admin-table-card h-100 d-flex flex-column">
+                <div class="admin-table-header">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-indigo-subtle text-primary border border-primary-subtle">
+                                <i class="bi bi-folder2-open me-1"></i>Nhóm Kỹ năng
+                            </span>
+                            <span class="small text-muted">(@Model.SkillCategories.Count nhóm)</span>
+                        </div>
+                        <div class="small text-muted mt-1">Phân loại các kỹ năng cùng chuyên môn (Frontend, Backend, DevOps...)</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSkillCategory" data-action="add-skill-cat">
+                        <i class="bi bi-plus-lg"></i> Thêm nhóm
+                    </button>
+                </div>
+
+                @if (Model.SkillCategories == null || Model.SkillCategories.Count == 0)
+                {
+                    <div class="admin-empty-state my-auto">
+                        <div class="admin-empty-icon">
+                            <i class="bi bi-folder-x"></i>
+                        </div>
+                        <h3 class="h6 fw-bold text-slate-800 mb-1">Chưa có nhóm kỹ năng nào</h3>
+                        <p class="text-muted small mb-3">Tạo nhóm đầu tiên để dễ dàng quản lý từ điển kỹ năng.</p>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSkillCategory" data-action="add-skill-cat">
+                            Tạo nhóm mới
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive flex-grow-1">
+                        <table class="table admin-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 60px;">ID</th>
+                                    <th scope="col">Tên nhóm kỹ năng</th>
+                                    <th scope="col" class="text-center">Số kỹ năng</th>
+                                    <th scope="col" class="text-end" style="width: 140px;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cat in Model.SkillCategories)
+                                {
+                                    <tr>
+                                        <td class="text-muted fw-semibold">#@cat.Id</td>
+                                        <td>
+                                            <span class="fw-bold text-slate-900">@cat.Name</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-primary border">
+                                                @cat.UsageCount kỹ năng
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-inline-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#modalSkillCategory"
+                                                        data-action="edit-skill-cat"
+                                                        data-id="@cat.Id"
+                                                        data-name="@cat.Name"
+                                                        title="Sửa nhóm">
+                                                    <i class="bi bi-pencil-square"></i> Sửa
+                                                </button>
+
+                                                @using (Html.BeginForm("DeleteSkillCategory", "Admin", FormMethod.Post, new {
+                                                    @class = "d-inline-block",
+                                                    data_confirm = cat.UsageCount > 0
+                                                        ? string.Format("CẢNH BÁO: Nhóm \"{0}\" đang chứa {1} kỹ năng. Bạn cần chuyển hoặc xóa các kỹ năng trước khi xóa nhóm. Bạn vẫn muốn tiếp tục?", cat.Name, cat.UsageCount)
+                                                        : string.Format("Xác nhận xóa nhóm kỹ năng \"{0}\"?", cat.Name)
+                                                }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@cat.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa nhóm kỹ năng">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Cột 2: Danh mục Ngành nghề tuyển dụng (Job Categories) -->
+        <div class="col-12 col-lg-6">
+            <div class="admin-table-card h-100 d-flex flex-column">
+                <div class="admin-table-header">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                <i class="bi bi-briefcase me-1"></i>Ngành nghề Việc làm
+                            </span>
+                            <span class="small text-muted">(@Model.JobCategories.Count danh mục)</span>
+                        </div>
+                        <div class="small text-muted mt-1">Phân loại lĩnh vực ngành nghề (Công nghệ, Tài chính, Bán hàng...)</div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalJobCategory" data-action="add-job-cat">
+                        <i class="bi bi-plus-lg"></i> Thêm ngành
+                    </button>
+                </div>
+
+                @if (Model.JobCategories == null || Model.JobCategories.Count == 0)
+                {
+                    <div class="admin-empty-state my-auto">
+                        <div class="admin-empty-icon">
+                            <i class="bi bi-tags"></i>
+                        </div>
+                        <h3 class="h6 fw-bold text-slate-800 mb-1">Chưa có ngành nghề nào</h3>
+                        <p class="text-muted small mb-3">Tạo danh mục ngành nghề đầu tiên cho website.</p>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalJobCategory" data-action="add-job-cat">
+                            Tạo ngành nghề mới
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive flex-grow-1">
+                        <table class="table admin-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 60px;">ID</th>
+                                    <th scope="col">Tên ngành nghề</th>
+                                    <th scope="col" class="text-center">Tin tuyển dụng</th>
+                                    <th scope="col" class="text-end" style="width: 140px;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cat in Model.JobCategories)
+                                {
+                                    <tr>
+                                        <td class="text-muted fw-semibold">#@cat.Id</td>
+                                        <td>
+                                            <span class="fw-bold text-slate-900">@cat.Name</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-success border">
+                                                @cat.UsageCount tin
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-inline-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#modalJobCategory"
+                                                        data-action="edit-job-cat"
+                                                        data-id="@cat.Id"
+                                                        data-name="@cat.Name"
+                                                        title="Sửa ngành nghề">
+                                                    <i class="bi bi-pencil-square"></i> Sửa
+                                                </button>
+
+                                                @using (Html.BeginForm("DeleteJobCategory", "Admin", FormMethod.Post, new {
+                                                    @class = "d-inline-block",
+                                                    data_confirm = cat.UsageCount > 0
+                                                        ? string.Format("CẢNH BÁO: Danh mục \"{0}\" đang có {1} tin tuyển dụng sử dụng. Hệ thống không cho phép xóa danh mục đang có liên kết tin. Bạn vẫn muốn tiếp tục?", cat.Name, cat.UsageCount)
+                                                        : string.Format("Xác nhận xóa danh mục ngành nghề \"{0}\"?", cat.Name)
+                                                }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@cat.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa ngành nghề">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Nhóm Kỹ năng -->
+<div class="modal fade" id="modalSkillCategory" tabindex="-1" aria-labelledby="modalSkillCatTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-modal-content">
+            @using (Html.BeginForm("SaveSkillCategory", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="skillCatId" value="" />
+
+                <div class="modal-header admin-modal-header">
+                    <h5 class="modal-title fw-bold" id="modalSkillCatTitle">Thêm nhóm kỹ năng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body admin-modal-body">
+                    <div class="mb-3">
+                        <label for="skillCatName" class="form-label fw-semibold">
+                            Tên nhóm kỹ năng <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" name="name" id="skillCatName" class="form-control" placeholder="VD: Lập trình Backend, Thiết kế UI/UX..." maxlength="100" required />
+                        <div class="form-text">Từ 1 đến 100 ký tự, không phân biệt hoa thường và không trùng lặp.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer admin-modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Lưu nhóm</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Ngành nghề Tuyển dụng -->
+<div class="modal fade" id="modalJobCategory" tabindex="-1" aria-labelledby="modalJobCatTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-modal-content">
+            @using (Html.BeginForm("SaveJobCategory", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="jobCatId" value="" />
+
+                <div class="modal-header admin-modal-header">
+                    <h5 class="modal-title fw-bold" id="modalJobCatTitle">Thêm ngành nghề tuyển dụng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body admin-modal-body">
+                    <div class="mb-3">
+                        <label for="jobCatName" class="form-label fw-semibold">
+                            Tên ngành nghề <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" name="name" id="jobCatName" class="form-control" placeholder="VD: Công nghệ thông tin, Kế toán - Kiểm toán..." maxlength="150" required />
+                        <div class="form-text">Từ 1 đến 150 ký tự. Đường dẫn (slug) sẽ được hệ thống tự động sinh và chuẩn hóa.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer admin-modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Lưu ngành nghề</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

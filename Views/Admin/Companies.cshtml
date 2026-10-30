@@ -1,0 +1,151 @@
+@model recruitment_website.Models.Admin.AdminCompaniesViewModel
+@{
+    ViewBag.Title = "Quản lý doanh nghiệp";
+    ViewBag.Subtitle = "Rà soát hồ sơ pháp lý, xác minh danh tính doanh nghiệp và bảo đảm độ tin cậy của nhà tuyển dụng.";
+    ViewBag.ActiveTab = "Companies";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Filter Pills -->
+    <div class="admin-filter-card">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="small fw-semibold text-secondary me-2">Bộ lọc trạng thái xác minh:</span>
+                <div class="filter-pills d-inline-flex">
+                    <a href="@Url.Action("Companies", "Admin")" class="filter-pill @(!Model.Verified.HasValue ? "active" : "")">
+                        Tất cả (@Model.Companies.Count)
+                    </a>
+                    <a href="@Url.Action("Companies", "Admin", new { verified = true })" class="filter-pill @(Model.Verified == true ? "active" : "")">
+                        <i class="bi bi-patch-check-fill text-primary me-1"></i>Đã xác minh
+                    </a>
+                    <a href="@Url.Action("Companies", "Admin", new { verified = false })" class="filter-pill @(Model.Verified == false ? "active" : "")">
+                        <i class="bi bi-clock-fill text-warning me-1"></i>Chưa xác minh
+                    </a>
+                </div>
+            </div>
+            <div class="small text-muted">
+                <i class="bi bi-info-circle me-1"></i>Chỉ công ty đã xác minh mới được duyệt đăng tin tuyển dụng.
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies List Card -->
+    <div class="admin-table-card">
+        <div class="admin-table-header">
+            <div>
+                <h2 class="h6 fw-bold mb-0 text-slate-800">Danh sách doanh nghiệp</h2>
+                <span class="small text-muted">Hiển thị @Model.Companies.Count công ty</span>
+            </div>
+        </div>
+
+        @if (Model.Companies == null || Model.Companies.Count == 0)
+        {
+            <div class="admin-empty-state">
+                <div class="admin-empty-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h3 class="h6 fw-bold text-slate-800 mb-1">Không có doanh nghiệp nào trong danh mục</h3>
+                <p class="text-muted small mb-3">Hiện chưa có công ty nào phù hợp với bộ lọc đã chọn.</p>
+                <a href="@Url.Action("Companies", "Admin")" class="btn btn-outline-secondary btn-sm">Xem tất cả công ty</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table admin-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 70px;">ID</th>
+                            <th scope="col">Tên doanh nghiệp</th>
+                            <th scope="col">Mã số thuế</th>
+                            <th scope="col">Tỉnh / Thành phố</th>
+                            <th scope="col" class="text-center">Tin tuyển dụng</th>
+                            <th scope="col">Xác minh</th>
+                            <th scope="col" class="text-end" style="width: 170px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var company in Model.Companies)
+                        {
+                            <tr>
+                                <td class="text-muted fw-semibold">#@company.Id</td>
+                                <td>
+                                    <div class="fw-bold text-slate-900">@company.Name</div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(company.TaxCode))
+                                    {
+                                        <code class="small text-dark bg-light px-2 py-1 rounded border">@company.TaxCode</code>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Chưa cung cấp</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-secondary small">
+                                        @(string.IsNullOrWhiteSpace(company.City) ? "Toàn quốc / Chưa cập nhật" : company.City)
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border">
+                                        @company.JobCount tin
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (company.IsVerified)
+                                    {
+                                        <span class="admin-status-badge admin-status-verified">
+                                            <i class="bi bi-patch-check-fill"></i>Đã xác minh
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-status-badge admin-status-unverified">
+                                            <i class="bi bi-hourglass-split"></i>Chưa xác minh
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @{
+                                        var confirmText = company.IsVerified
+                                            ? string.Format("LƯU Ý QUAN TRỌNG: Gỡ xác minh công ty \"{0}\" sẽ tự động chuyển tất cả các tin tuyển dụng đang công khai của công ty về trạng thái 'Chờ duyệt' (Pending) để xem xét lại. Bạn chắc chắn muốn gỡ xác minh?", company.Name)
+                                            : string.Format("Xác nhận đánh dấu công ty \"{0}\" đã được xác minh hồ sơ doanh nghiệp?", company.Name);
+                                    }
+
+                                    @using (Html.BeginForm("ToggleCompanyVerification", "Admin", FormMethod.Post, new { @class = "d-inline-block", data_confirm = confirmText }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@company.Id" />
+                                        if (company.IsVerified)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Gỡ huy hiệu xác minh">
+                                                <i class="bi bi-x-circle"></i> Gỡ xác minh
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-success" title="Xác minh công ty này">
+                                                <i class="bi bi-check-lg"></i> Xác minh
+                                            </button>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

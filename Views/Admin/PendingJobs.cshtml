@@ -1,0 +1,119 @@
+@model recruitment_website.Models.Admin.AdminJobsViewModel
+@{
+    ViewBag.Title = "Kiểm duyệt tin tuyển dụng chờ xuất bản";
+    ViewBag.Subtitle = "Rà soát nội dung tin tuyển dụng trước khi xuất bản công khai lên hệ thống việc làm.";
+    ViewBag.ActiveTab = "PendingJobs";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Policy Banner Card -->
+    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 p-3 mb-4 rounded-3">
+        <div class="admin-stat-icon-wrapper stat-icon-blue" style="width: 40px; height: 40px; font-size: 1.15rem;">
+            <i class="bi bi-shield-check"></i>
+        </div>
+        <div class="small">
+            <strong>Tiêu chuẩn duyệt tin:</strong> Tin tuyển dụng chỉ có thể được phê duyệt khi công ty tuyển dụng đã được xác minh (Verified). Sau khi duyệt, tin sẽ chuyển ngay sang trạng thái <em>Đang tuyển (Published)</em> và hiển thị trên trang tìm kiếm việc làm.
+        </div>
+    </div>
+
+    <!-- Jobs Table Card -->
+    <div class="admin-table-card">
+        <div class="admin-table-header">
+            <div>
+                <h2 class="h6 fw-bold mb-0 text-slate-800">Danh sách tin tuyển dụng chờ phê duyệt</h2>
+                <span class="small text-muted">Có @Model.Jobs.Count tin đang chờ</span>
+            </div>
+            @if (Model.Jobs.Count > 0)
+            {
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2">
+                    <i class="bi bi-clock-history me-1"></i>Cần xử lý
+                </span>
+            }
+        </div>
+
+        @if (Model.Jobs == null || Model.Jobs.Count == 0)
+        {
+            <div class="admin-empty-state">
+                <div class="admin-empty-icon text-success bg-success-subtle">
+                    <i class="bi bi-check-all"></i>
+                </div>
+                <h3 class="h6 fw-bold text-slate-800 mb-1">Hiện không có tin tuyển dụng nào chờ duyệt</h3>
+                <p class="text-muted small mb-3">Tất cả các tin tuyển dụng đã được xử lý hoặc các công ty chưa gửi tin mới.</p>
+                <a href="@Url.Action("Index", "Admin")" class="btn btn-outline-secondary btn-sm">Quay lại Tổng quan</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table admin-table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 70px;">ID</th>
+                            <th scope="col">Vị trí tuyển dụng</th>
+                            <th scope="col">Doanh nghiệp</th>
+                            <th scope="col">Thời gian gửi duyệt</th>
+                            <th scope="col" class="text-center">Hồ sơ nộp</th>
+                            <th scope="col" class="text-end" style="width: 220px;">Thao tác phê duyệt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var job in Model.Jobs)
+                        {
+                            <tr>
+                                <td class="text-muted fw-semibold">#@job.Id</td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Job", new { id = job.Id })" target="_blank" class="fw-bold text-slate-900 text-decoration-none hover-primary" title="Xem chi tiết nội dung tin">
+                                        @job.Title
+                                        <i class="bi bi-box-arrow-up-right small text-muted ms-1"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-secondary">
+                                        <i class="bi bi-building me-1 text-muted"></i>@job.CompanyName
+                                    </span>
+                                </td>
+                                <td class="text-secondary small">
+                                    <i class="bi bi-calendar3 me-1 text-muted"></i>@job.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-secondary border">
+                                        @job.ApplicationCount đơn
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="@Url.Action("Details", "Job", new { id = job.Id })" target="_blank" class="btn btn-sm btn-outline-secondary" title="Xem nội dung chi tiết">
+                                            <i class="bi bi-eye"></i> Xem
+                                        </a>
+
+                                        @using (Html.BeginForm("ApproveJob", "Admin", FormMethod.Post, new {
+                                            @class = "d-inline-block",
+                                            data_confirm = string.Format("Bạn có chắc chắn muốn duyệt và đăng công khai tin tuyển dụng \"{0}\"?", job.Title)
+                                        }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@job.Id" />
+                                            <button type="submit" class="btn btn-sm btn-success" title="Duyệt và xuất bản tin">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Duyệt tin
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

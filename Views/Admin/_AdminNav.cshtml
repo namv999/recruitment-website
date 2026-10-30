@@ -1,0 +1,62 @@
+@{
+    string activeTab = ViewBag.ActiveTab as string ?? "";
+    string pageTitle = ViewBag.Title as string ?? "Quản trị hệ thống";
+    string pageSubtitle = ViewBag.Subtitle as string ?? "";
+}
+
+<div class="admin-header">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Admin")">Quản trị</a></li>
+            @if (activeTab != "Index")
+            {
+                <li class="breadcrumb-item active" aria-current="page">@pageTitle</li>
+            }
+        </ol>
+    </nav>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="admin-badge">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    Quản trị viên
+                </span>
+                <h1 class="h3 fw-bold mb-0 text-slate-900">@pageTitle</h1>
+            </div>
+            @if (!string.IsNullOrEmpty(pageSubtitle))
+            {
+                <p class="text-muted mb-0 small">@pageSubtitle</p>
+            }
+        </div>
+    </div>
+
+    <!-- Admin Navigation Tabs -->
+    <div class="admin-nav-tabs">
+        <a href="@Url.Action("Index", "Admin")" class="admin-nav-link @(activeTab == "Index" ? "active" : "")">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Tổng quan</span>
+        </a>
+        <a href="@Url.Action("Users", "Admin")" class="admin-nav-link @(activeTab == "Users" ? "active" : "")">
+            <i class="bi bi-people-fill"></i>
+            <span>Tài khoản người dùng</span>
+        </a>
+        <a href="@Url.Action("Companies", "Admin")" class="admin-nav-link @(activeTab == "Companies" ? "active" : "")">
+            <i class="bi bi-buildings-fill"></i>
+            <span>Doanh nghiệp</span>
+        </a>
+        <a href="@Url.Action("PendingJobs", "Admin")" class="admin-nav-link @(activeTab == "PendingJobs" ? "active" : "")">
+            <i class="bi bi-clock-history"></i>
+            <span>Tin chờ duyệt</span>
+        </a>
+        <a href="@Url.Action("Skills", "Admin")" class="admin-nav-link @(activeTab == "Skills" ? "active" : "")">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <span>Kỹ năng</span>
+        </a>
+        <a href="@Url.Action("Categories", "Admin")" class="admin-nav-link @(activeTab == "Categories" ? "active" : "")">
+            <i class="bi bi-tags-fill"></i>
+            <span>Ngành & Nhóm</span>
+        </a>
+    </div>
+</div>

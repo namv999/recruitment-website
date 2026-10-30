@@ -1,0 +1,376 @@
+/* ==========================================================================
+   Content/css/admin/admin.css
+   ADMIN MODULE STYLESHEET
+   Design Direction: Modern Minimalism + Bento Grid
+   Complies with docs/admin/ADMIN-FE-BE-CONTRACT.md & SKILL.md
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ADMIN NAVIGATION & HEADER
+   -------------------------------------------------------------------------- */
+.admin-header {
+    margin-bottom: 1.5rem;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    background-color: #fdf2f8;
+    color: #be185d;
+    border: 1px solid #fbcfe8;
+}
+
+.admin-nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-subtle);
+}
+
+.admin-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.admin-nav-link:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.admin-nav-link.active {
+    color: #ffffff;
+    background-color: var(--color-primary);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+}
+
+.admin-nav-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-full);
+    background-color: rgba(255, 255, 255, 0.25);
+    color: currentColor;
+    font-weight: 700;
+}
+
+.admin-nav-link:not(.active) .admin-nav-badge {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text-muted);
+}
+
+.admin-nav-link:not(.active) .admin-nav-badge.badge-alert {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+/* --------------------------------------------------------------------------
+   2. BENTO STAT CARDS
+   -------------------------------------------------------------------------- */
+.admin-stat-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: #cbd5e1;
+}
+
+.admin-stat-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.admin-stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.stat-icon-blue {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.stat-icon-green {
+    background-color: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.stat-icon-amber {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning);
+}
+
+.stat-icon-purple {
+    background-color: #f5f3ff;
+    color: #7c3aed;
+}
+
+.stat-icon-indigo {
+    background-color: #eef2ff;
+    color: #4f46e5;
+}
+
+.stat-icon-rose {
+    background-color: #fff1f2;
+    color: #e11d48;
+}
+
+.admin-stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-text);
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.03em;
+}
+
+.admin-stat-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.admin-stat-desc {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.admin-stat-footer {
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.825rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. TABLES & LISTINGS
+   -------------------------------------------------------------------------- */
+.admin-table-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.admin-table-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background-color: var(--color-surface);
+}
+
+.admin-table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.admin-table th {
+    background-color: var(--color-surface-muted);
+    font-size: 0.775rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border-subtle);
+    vertical-align: middle;
+}
+
+.admin-table tr:hover td {
+    background-color: rgba(248, 250, 252, 0.75);
+}
+
+.admin-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. STATUS BADGES
+   -------------------------------------------------------------------------- */
+.admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+.admin-status-active {
+    background-color: var(--color-success-light);
+    color: #15803d;
+    border: 1px solid var(--color-success-border);
+}
+
+.admin-status-inactive {
+    background-color: var(--color-danger-light);
+    color: #b91c1c;
+    border: 1px solid var(--color-danger-border);
+}
+
+.admin-status-verified {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-border);
+}
+
+.admin-status-unverified {
+    background-color: var(--color-warning-light);
+    color: #b45309;
+    border: 1px solid var(--color-warning-border);
+}
+
+.admin-status-pending {
+    background-color: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+/* --------------------------------------------------------------------------
+   5. FILTER PANEL
+   -------------------------------------------------------------------------- */
+.admin-filter-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-subtle);
+}
+
+.filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-pill {
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.825rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+    transition: all var(--transition-fast);
+}
+
+.filter-pill:hover {
+    border-color: var(--color-primary-border);
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.filter-pill.active {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   6. MODAL & INLINE FORMS
+   -------------------------------------------------------------------------- */
+.admin-modal-content {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-dropdown);
+    overflow: hidden;
+}
+
+.admin-modal-header {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding: 1.25rem 1.5rem;
+}
+
+.admin-modal-body {
+    padding: 1.5rem;
+}
+
+.admin-modal-footer {
+    background-color: var(--color-surface-muted);
+    border-top: 1px solid var(--color-border-subtle);
+    padding: 1rem 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. EMPTY STATES
+   -------------------------------------------------------------------------- */
+.admin-empty-state {
+    padding: 4rem 1.5rem;
+    text-align: center;
+}
+
+.admin-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-surface-muted);
+    color: var(--color-text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
+}

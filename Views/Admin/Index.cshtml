@@ -1,0 +1,276 @@
+@model recruitment_website.Models.Admin.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Bảng điều khiển Quản trị";
+    ViewBag.Subtitle = "Tổng quan số liệu vận hành và các tác vụ cần phê duyệt trong hệ thống.";
+    ViewBag.ActiveTab = "Index";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/Content/css/admin/admin.css" />
+}
+
+<div class="container py-3">
+    @Html.Partial("_AdminNav")
+
+    <!-- Bento Grid - Row 1: Thống kê tác vụ cần chú ý -->
+    <div class="row g-3 mb-4">
+        <!-- Card 1: Tài khoản người dùng -->
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-stat-card">
+                <div>
+                    <div class="admin-stat-top">
+                        <div>
+                            <div class="admin-stat-label">Tài khoản người dùng</div>
+                            <div class="admin-stat-value">@Model.TotalUsers.ToString("N0")</div>
+                        </div>
+                        <div class="admin-stat-icon-wrapper stat-icon-blue">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="bi bi-check-circle me-1"></i>@Model.ActiveUsers.ToString("N0") hoạt động
+                        </span>
+                        @if (Model.TotalUsers > Model.ActiveUsers)
+                        {
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                <i class="bi bi-lock me-1"></i>@((Model.TotalUsers - Model.ActiveUsers).ToString("N0")) đã khóa
+                            </span>
+                        }
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <span class="text-muted">Ứng viên & Nhà tuyển dụng</span>
+                    <a href="@Url.Action("Users", "Admin")" class="fw-semibold text-primary">
+                        Quản lý <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Doanh nghiệp chờ xác minh -->
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-stat-card @(Model.PendingCompanies > 0 ? "border-warning" : "")">
+                <div>
+                    <div class="admin-stat-top">
+                        <div>
+                            <div class="admin-stat-label">Doanh nghiệp chờ xác minh</div>
+                            <div class="admin-stat-value @(Model.PendingCompanies > 0 ? "text-warning" : "")">
+                                @Model.PendingCompanies.ToString("N0")
+                            </div>
+                        </div>
+                        <div class="admin-stat-icon-wrapper stat-icon-amber">
+                            <i class="bi bi-buildings-fill"></i>
+                        </div>
+                    </div>
+                    @if (Model.PendingCompanies > 0)
+                    {
+                        <div class="small text-warning fw-semibold">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Có công ty đang chờ duyệt thông tin pháp lý
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="small text-muted">
+                            <i class="bi bi-check-circle me-1 text-success"></i>Tất cả doanh nghiệp đã được rà soát
+                        </div>
+                    }
+                </div>
+                <div class="admin-stat-footer">
+                    <span class="text-muted">Bộ lọc chưa xác minh</span>
+                    <a href="@Url.Action("Companies", "Admin", new { verified = false })" class="fw-semibold text-primary">
+                        Xác minh ngay <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Tin tuyển dụng chờ duyệt -->
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="admin-stat-card @(Model.PendingJobs > 0 ? "border-primary" : "")">
+                <div>
+                    <div class="admin-stat-top">
+                        <div>
+                            <div class="admin-stat-label">Tin chờ duyệt</div>
+                            <div class="admin-stat-value @(Model.PendingJobs > 0 ? "text-primary" : "")">
+                                @Model.PendingJobs.ToString("N0")
+                            </div>
+                        </div>
+                        <div class="admin-stat-icon-wrapper stat-icon-rose">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                    </div>
+                    @if (Model.PendingJobs > 0)
+                    {
+                        <div class="small text-primary fw-semibold">
+                            <i class="bi bi-bell-fill me-1"></i>Cần kiểm duyệt nội dung trước khi xuất bản
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="small text-muted">
+                            <i class="bi bi-check2-all me-1 text-success"></i>Không có tin tuyển dụng nào tồn đọng
+                        </div>
+                    }
+                </div>
+                <div class="admin-stat-footer">
+                    <span class="text-muted">Kiểm duyệt nội dung</span>
+                    <a href="@Url.Action("PendingJobs", "Admin")" class="fw-semibold text-primary">
+                        Duyệt tin <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Kỹ năng hệ thống -->
+        <div class="col-12 col-md-6 col-xl-6">
+            <div class="admin-stat-card">
+                <div>
+                    <div class="admin-stat-top">
+                        <div>
+                            <div class="admin-stat-label">Kỹ năng hệ thống</div>
+                            <div class="admin-stat-value">@Model.TotalSkills.ToString("N0")</div>
+                        </div>
+                        <div class="admin-stat-icon-wrapper stat-icon-indigo">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        Dùng làm từ khóa lọc tin, gán hồ sơ ứng viên và kết nối tuyển dụng tự động.
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <span class="text-muted">Từ điển kỹ năng</span>
+                    <a href="@Url.Action("Skills", "Admin")" class="fw-semibold text-primary">
+                        Xem danh sách <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 5: Danh mục ngành nghề -->
+        <div class="col-12 col-md-6 col-xl-6">
+            <div class="admin-stat-card">
+                <div>
+                    <div class="admin-stat-top">
+                        <div>
+                            <div class="admin-stat-label">Ngành nghề tuyển dụng</div>
+                            <div class="admin-stat-value">@Model.TotalJobCategories.ToString("N0")</div>
+                        </div>
+                        <div class="admin-stat-icon-wrapper stat-icon-purple">
+                            <i class="bi bi-tags-fill"></i>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        Danh mục phân cấp ngành nghề chuẩn hóa cho toàn bộ thị trường việc làm.
+                    </div>
+                </div>
+                <div class="admin-stat-footer">
+                    <span class="text-muted">Phân loại việc làm & Nhóm kỹ năng</span>
+                    <a href="@Url.Action("Categories", "Admin")" class="fw-semibold text-primary">
+                        Quản lý danh mục <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bento Grid - Row 2: Phím tắt thao tác nhanh & Hướng dẫn nghiệp vụ -->
+    <div class="row g-3">
+        <div class="col-12 col-lg-7">
+            <div class="bento-card h-100">
+                <div class="bento-card-header">
+                    <h2 class="bento-card-title">
+                        <i class="bi bi-lightning-fill text-warning me-2"></i>Thao tác quản trị thường gặp
+                    </h2>
+                </div>
+                <div class="row g-2">
+                    <div class="col-12 col-sm-6">
+                        <a href="@Url.Action("PendingJobs", "Admin")" class="d-flex align-items-center gap-3 p-3 rounded border text-decoration-none bg-light-subtle h-100 hover-shadow transition">
+                            <div class="admin-stat-icon-wrapper stat-icon-rose" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Duyệt tin chờ xuất bản</div>
+                                <div class="small text-muted">@Model.PendingJobs tin đang chờ phê duyệt</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <a href="@Url.Action("Companies", "Admin", new { verified = false })" class="d-flex align-items-center gap-3 p-3 rounded border text-decoration-none bg-light-subtle h-100 hover-shadow transition">
+                            <div class="admin-stat-icon-wrapper stat-icon-amber" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                <i class="bi bi-patch-check"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Duyệt xác minh công ty</div>
+                                <div class="small text-muted">@Model.PendingCompanies công ty chưa xác minh</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <a href="@Url.Action("Users", "Admin")" class="d-flex align-items-center gap-3 p-3 rounded border text-decoration-none bg-light-subtle h-100 hover-shadow transition">
+                            <div class="admin-stat-icon-wrapper stat-icon-blue" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                <i class="bi bi-person-gear"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Kiểm soát tài khoản</div>
+                                <div class="small text-muted">Mở / Khóa tài khoản ứng viên & NTD</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <a href="@Url.Action("Skills", "Admin")" class="d-flex align-items-center gap-3 p-3 rounded border text-decoration-none bg-light-subtle h-100 hover-shadow transition">
+                            <div class="admin-stat-icon-wrapper stat-icon-indigo" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                <i class="bi bi-plus-circle"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Thêm kỹ năng mới</div>
+                                <div class="small text-muted">Bổ sung từ điển kỹ năng tuyển dụng</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="bento-card h-100">
+                <div class="bento-card-header">
+                    <h2 class="bento-card-title">
+                        <i class="bi bi-shield-check text-success me-2"></i>Quy định nghiệp vụ hệ thống
+                    </h2>
+                </div>
+                <ul class="list-unstyled mb-0 d-flex flex-column gap-3 small text-secondary">
+                    <li class="d-flex gap-2">
+                        <i class="bi bi-info-circle-fill text-primary mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>Duyệt tin tuyển dụng:</strong> Chỉ có thể duyệt tin của những doanh nghiệp đã xác minh (Verified).
+                        </div>
+                    </li>
+                    <li class="d-flex gap-2">
+                        <i class="bi bi-exclamation-triangle-fill text-warning mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>Gỡ xác minh công ty:</strong> Khi gỡ xác minh một doanh nghiệp, toàn bộ tin đang công khai của doanh nghiệp đó sẽ tự động chuyển về trạng thái <em>Chờ duyệt</em>.
+                        </div>
+                    </li>
+                    <li class="d-flex gap-2">
+                        <i class="bi bi-shield-lock-fill text-danger mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>Bảo mật tài khoản:</strong> Không thể tự khóa tài khoản của chính mình hoặc tài khoản Quản trị viên khác. Hệ thống dùng cơ chế khóa mềm (inactive).
+                        </div>
+                    </li>
+                    <li class="d-flex gap-2">
+                        <i class="bi bi-diagram-3-fill text-info mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong>Toàn vẹn dữ liệu:</strong> Kỹ năng và danh mục đã có dữ liệu tham chiếu (hồ sơ, tin tuyển dụng) sẽ được bảo vệ không thể xóa cứng.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin.js"></script>
+}

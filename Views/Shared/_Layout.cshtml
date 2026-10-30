@@ -103,6 +103,13 @@
                                         <span>Việc đã nộp</span>
                                     </a>
                                 }
+                                else if (userRole == "admin")
+                                {
+                                    <a href="@Url.Action("Index", "Admin", new { area = "" })" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-shield-lock-fill me-1"></i>
+                                        <span>Bảng Quản trị</span>
+                                    </a>
+                                }
 
                                 <!-- User Dropdown -->
                                 <div class="dropdown">
@@ -174,6 +181,50 @@
                                                         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                                                     </svg>
                                                     <span>Thông tin công ty</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        else if (userRole == "admin")
+                                        {
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom fw-semibold text-primary" href="@Url.Action("Index", "Admin", new { area = "" })">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                                    </svg>
+                                                    <span>Bảng điều khiển Quản trị</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Users", "Admin", new { area = "" })">
+                                                    <i class="bi bi-people me-1"></i>
+                                                    <span>Quản lý người dùng</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Companies", "Admin", new { area = "" })">
+                                                    <i class="bi bi-buildings me-1"></i>
+                                                    <span>Quản lý công ty</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("PendingJobs", "Admin", new { area = "" })">
+                                                    <i class="bi bi-clock-history me-1"></i>
+                                                    <span>Tin chờ duyệt</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Skills", "Admin", new { area = "" })">
+                                                    <i class="bi bi-lightning-charge me-1"></i>
+                                                    <span>Từ điển kỹ năng</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Categories", "Admin", new { area = "" })">
+                                                    <i class="bi bi-tags me-1"></i>
+                                                    <span>Ngành nghề & Nhóm</span>
                                                 </a>
                                             </li>
                                         }

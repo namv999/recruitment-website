@@ -73,6 +73,13 @@ namespace recruitment_website.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
+            // Role chỉ được chọn từ các loại tài khoản công khai; không tin giá trị do client gửi.
+            if (model.Role != "candidate" && model.Role != "employer")
+            {
+                ModelState.AddModelError("Role", "Vai trò tài khoản không hợp lệ.");
+                return View(model);
+            }
+
             if (db.users.Any(u => u.email == model.Email))
             {
                 ModelState.AddModelError("Email", "Email đã được sử dụng.");
