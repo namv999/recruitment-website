@@ -1,6 +1,6 @@
 ﻿/* ==========================================================================
    Content/css/application/application.css
-   Module: Applications & Status Tracking
+   Module: Applications & Status Tracking (Employer & Candidate)
    Rules: Prefix classes with .app- (CONVENTIONS.md)
    ========================================================================== */
 
@@ -51,11 +51,16 @@
     border: 1px solid #fecaca;
 }
 
-/* Bổ sung trạng thái Rút đơn (Withdrawn) */
 .app-status-withdrawn {
     background-color: #f1f5f9;
     color: #475569;
     border: 1px solid #cbd5e1;
+}
+
+/* --- Tab lọc trạng thái (ByJob.cshtml) --- */
+.app-status-tabs .btn {
+    font-weight: 500;
+    transition: all var(--transition-normal, 0.2s ease-in-out);
 }
 
 /* --- Tùy chọn CV trong Form Apply --- */
@@ -69,7 +74,7 @@
         background-color: var(--color-bg-light, #f8fafc);
     }
 
-/* --- Timeline Lịch sử Trạng thái (Details.cshtml) --- */
+/* --- Timeline Lịch sử Trạng thái (Details.cshtml & Review.cshtml) --- */
 .app-timeline {
     list-style: none;
     padding: 0;
@@ -113,4 +118,17 @@
     border: 1px solid var(--color-border, #e2e8f0);
     border-radius: var(--radius-md, 8px);
     padding: 0.75rem 1rem;
+}
+
+/* --- Timeline Lịch sử thu gọn (Cột phải Review.cshtml) --- */
+.app-history-timeline .app-history-item:last-child,
+.app-experience-list .app-experience-item:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* --- Utility Class cho nội dung bản ghi (Thư giới thiệu, Ghi chú) --- */
+.app-preserve-line {
+    white-space: pre-line;
 }

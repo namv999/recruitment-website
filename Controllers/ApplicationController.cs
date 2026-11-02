@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using recruitment_website.Constants;
 using recruitment_website.DAL;
 using recruitment_website.Filters;
 using recruitment_website.Models.Application;
+using recruitment_website.Models.Candidate;
 
 namespace recruitment_website.Controllers
 {
@@ -15,7 +17,16 @@ namespace recruitment_website.Controllers
     {
         private readonly recruitment_dbEntities _db = new recruitment_dbEntities();
 
-        // ===== PHÍA ỨNG VIÊN =====
+        private static readonly string[] AllStatuses =
+        {
+            ApplicationStatus.Applied, ApplicationStatus.Screening, ApplicationStatus.Shortlisted,
+            ApplicationStatus.Interview, ApplicationStatus.Offer, ApplicationStatus.Hired,
+            ApplicationStatus.Rejected, ApplicationStatus.Withdrawn
+        };
+
+        // =====================================================================
+        // PHÍA ỨNG VIÊN
+        // =====================================================================
 
         [HttpGet]
         [AuthorizeRole(UserRole.Candidate)]
@@ -202,20 +213,274 @@ namespace recruitment_website.Controllers
                 return RedirectToAction("Details", new { id });
             }
 
-            ChangeStatus(app, ApplicationStatus.Withdrawn, null);
+            ApplyStatus(app, ApplicationStatus.Withdrawn, null);
             _db.SaveChanges();
 
             TempData["Success"] = "Đã rút đơn ứng tuyển.";
             return RedirectToAction("Index");
         }
 
-        // ===== HELPER DÙNG CHUNG (phía nhà tuyển dụng sẽ dùng lại ChangeStatus) =====
+        // =====================================================================
+        // PHÍA NHÀ TUYỂN DỤNG
+        // =====================================================================
+
+        // GET: Application/ByJob?jobId=5&status=applied
+        [AuthorizeRole(UserRole.Employer)]
+        public ActionResult ByJob(long jobId, string status = null)
+        {
+            long? companyId = GetEmployerCompanyId();
+            if (companyId == null) return RedirectNoCompany();
+
+            // Tin của công ty khác -> 404 (không lộ là tin có tồn tại)
+            var job = _db.jobs.FirstOrDefault(j => j.id == jobId && j.company_id == companyId.Value);
+            if (job == null) return HttpNotFound();
+
+            if (!AllStatuses.Contains(status)) status = null;
+
+            var all = _db.applications.Where(a => a.job_id == jobId);
+            var counts = all.GroupBy(a => a.status)
+                            .Select(g => new { Status = g.Key, Count = g.Count() })
+                            .ToList();
+
+            var query = status == null ? all : all.Where(a => a.status == status);
+            var items = query
+                .OrderByDescending(a => a.applied_at)
+                .Select(a => new
+                {
+                    a.id,
+                    a.status,
+                    a.applied_at,
+                    HasNote = a.recruiter_note != null,
+                    a.candidates.full_name,
+                    a.candidates.headline,
+                    a.candidates.city,
+                    a.candidates.total_experience_years
+                })
+                .ToList()
+                .Select(x => new ApplicantListItemViewModel
+                {
+                    ApplicationId = x.id,
+                    CandidateName = x.full_name,
+                    Headline = x.headline,
+                    City = x.city,
+                    TotalExperienceYears = x.total_experience_years,
+                    Status = x.status,
+                    StatusLabel = ApplicationStatus.Label(x.status),
+                    AppliedAt = x.applied_at,
+                    HasNote = x.HasNote
+                }).ToList();
+
+            var vm = new JobApplicantsViewModel
+            {
+                JobId = job.id,
+                JobTitle = job.title,
+                TotalCount = counts.Sum(c => c.Count),
+                CurrentStatus = status ?? "",
+                Items = items
+            };
+            vm.StatusFilters.Add(new ApplicantStatusFilterViewModel
+            {
+                Value = "",
+                Label = "Tất cả",
+                Count = vm.TotalCount,
+                IsActive = status == null
+            });
+            foreach (var s in AllStatuses)
+            {
+                vm.StatusFilters.Add(new ApplicantStatusFilterViewModel
+                {
+                    Value = s,
+                    Label = ApplicationStatus.Label(s),
+                    Count = counts.Where(c => c.Status == s).Select(c => c.Count).FirstOrDefault(),
+                    IsActive = status == s
+                });
+            }
+            return View(vm);
+        }
+
+        // GET: Application/Review/5   (id = application id)
+        [AuthorizeRole(UserRole.Employer)]
+        public ActionResult Review(long id)
+        {
+            long? companyId = GetEmployerCompanyId();
+            if (companyId == null) return RedirectNoCompany();
+
+            var app = FindEmployerApplication(id, companyId.Value, withDetails: true);
+            if (app == null) return HttpNotFound();
+
+            var c = app.candidates;
+
+            var skills = _db.candidate_skills
+                .Where(cs => cs.candidate_id == c.id)
+                .OrderByDescending(cs => cs.proficiency)
+                .Select(cs => new { cs.skills.name, cs.proficiency, cs.years_experience })
+                .ToList()
+                .Select(x => new ApplicantSkillViewModel
+                {
+                    Name = x.name,
+                    Proficiency = x.proficiency,
+                    YearsExperience = x.years_experience
+                }).ToList();
+
+            var experiences = _db.candidate_experiences
+                .Where(e => e.candidate_id == c.id)
+                .OrderByDescending(e => e.start_date)
+                .ToList()
+                .Select(e => new ExperienceItemViewModel
+                {
+                    Id = e.id,
+                    CompanyName = e.company_name,
+                    JobTitle = e.job_title,
+                    StartDate = e.start_date,
+                    EndDate = e.end_date,
+                    Description = e.description
+                }).ToList();
+
+            var educations = _db.candidate_educations
+                .Where(e => e.candidate_id == c.id)
+                .OrderByDescending(e => e.end_year)
+                .ToList()
+                .Select(e => new EducationItemViewModel
+                {
+                    Id = e.id,
+                    SchoolName = e.school_name,
+                    Major = e.major,
+                    DegreeLabel = EducationLevel.Label(e.degree),
+                    StartYear = e.start_year,
+                    EndYear = e.end_year
+                }).ToList();
+
+            var history = _db.application_status_history
+                .Where(h => h.application_id == app.id)
+                .OrderByDescending(h => h.changed_at)
+                .ToList()
+                .Select(h => new ApplicantHistoryRowViewModel
+                {
+                    FromLabel = h.from_status == null ? "" : ApplicationStatus.Label(h.from_status),
+                    ToLabel = ApplicationStatus.Label(h.to_status),
+                    ChangedAt = h.changed_at
+                }).ToList();
+
+            var vm = new ApplicationReviewViewModel
+            {
+                Id = app.id,
+                JobId = app.job_id,
+                JobTitle = app.jobs.title,
+                AppliedAt = app.applied_at,
+                Status = app.status,
+                StatusLabel = ApplicationStatus.Label(app.status),
+                CoverLetter = app.cover_letter,
+                CvTitle = app.cvs != null ? app.cvs.title : null,
+                CandidateName = c.full_name,
+                Email = c.users != null ? c.users.email : null,
+                Phone = c.phone,
+                City = c.city,
+                Headline = c.headline,
+                Summary = c.summary,
+                TotalExperienceYears = c.total_experience_years,
+                HighestEducationLabel = EducationLevel.Label(c.highest_education),
+                ExpectedSalary = c.expected_salary,
+                Skills = skills,
+                Experiences = experiences,
+                Educations = educations,
+                NextStatuses = ApplicationStatus.NextOptions(app.status)
+                    .Select(s => new ApplicantNextStatusViewModel
+                    {
+                        Value = s,
+                        Label = ApplicationStatus.Label(s),
+                        IsDanger = s == ApplicationStatus.Rejected
+                    }).ToList(),
+                RecruiterNote = app.recruiter_note,
+                History = history
+            };
+            return View(vm);
+        }
+
+        // GET: Application/DownloadCv/5   (id = application id, KHÔNG phải cv id)
+        [AuthorizeRole(UserRole.Employer)]
+        public ActionResult DownloadCv(long id)
+        {
+            long? companyId = GetEmployerCompanyId();
+            if (companyId == null) return RedirectNoCompany();
+
+            var app = FindEmployerApplication(id, companyId.Value, withDetails: true);
+            if (app == null || app.cvs == null) return HttpNotFound();
+
+            string physicalPath = Server.MapPath(app.cvs.file_url);
+            if (!System.IO.File.Exists(physicalPath)) return HttpNotFound();
+
+            string ext = Path.GetExtension(physicalPath).ToLowerInvariant();
+            string contentType = ext == ".pdf" ? "application/pdf"
+                               : ext == ".docx" ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                               : "application/msword";
+            string safeTitle = string.Concat(app.cvs.title.Split(Path.GetInvalidFileNameChars()));
+            return File(physicalPath, contentType, safeTitle + ext);
+        }
+
+        // POST: Application/ChangeStatus
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AuthorizeRole(UserRole.Employer)]
+        public ActionResult ChangeStatus(long id, string newStatus)
+        {
+            long? companyId = GetEmployerCompanyId();
+            if (companyId == null) return RedirectNoCompany();
+
+            var app = FindEmployerApplication(id, companyId.Value);
+            if (app == null) return HttpNotFound();
+
+            // Luật chuyển trạng thái kiểm tra trên status HIỆN TẠI trong DB, không tin dữ liệu form
+            if (!ApplicationStatus.CanEmployerChange(app.status, newStatus))
+            {
+                TempData["Error"] = "Không thể chuyển từ \"" + ApplicationStatus.Label(app.status)
+                                  + "\" sang trạng thái này.";
+                return RedirectToAction("Review", new { id });
+            }
+
+            // note = null: ghi chú nội bộ chỉ đi qua SaveNote, tránh rò sang phía ứng viên qua lịch sử
+            ApplyStatus(app, newStatus, null);
+            _db.SaveChanges();
+
+            TempData["Success"] = "Đã chuyển hồ sơ sang \"" + ApplicationStatus.Label(newStatus) + "\".";
+            return RedirectToAction("Review", new { id });
+        }
+
+        // POST: Application/SaveNote
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AuthorizeRole(UserRole.Employer)]
+        public ActionResult SaveNote(long id, string note)
+        {
+            long? companyId = GetEmployerCompanyId();
+            if (companyId == null) return RedirectNoCompany();
+
+            var app = FindEmployerApplication(id, companyId.Value);
+            if (app == null) return HttpNotFound();
+
+            note = string.IsNullOrWhiteSpace(note) ? null : note.Trim();
+            if (note != null && note.Length > 2000)
+            {
+                TempData["Error"] = "Ghi chú tối đa 2000 ký tự.";
+                return RedirectToAction("Review", new { id });
+            }
+
+            app.recruiter_note = note;
+            app.updated_at = DateTime.Now;
+            _db.SaveChanges();
+
+            TempData["Success"] = "Đã lưu ghi chú nội bộ.";
+            return RedirectToAction("Review", new { id });
+        }
+
+        // =====================================================================
+        // HELPER DÙNG CHUNG
+        // =====================================================================
 
         /// <summary>
         /// Đổi trạng thái + chuẩn bị dòng lịch sử. CHƯA gọi SaveChanges: nơi gọi tự SaveChanges
         /// để đơn và lịch sử lưu cùng 1 lần.
         /// </summary>
-        private void ChangeStatus(applications app, string newStatus, string note)
+        private void ApplyStatus(applications app, string newStatus, string note)
         {
             var from = app.status; // đọc status cũ TRƯỚC khi gán
             if (from == newStatus) return;
@@ -234,6 +499,8 @@ namespace recruitment_website.Controllers
                 changed_at = now
             });
         }
+
+        // ---- helper phía ứng viên ----
 
         private candidates GetCurrentCandidate()
         {
@@ -316,18 +583,42 @@ namespace recruitment_website.Controllers
 
         private static List<SelectListItem> BuildStatusOptions(string selected)
         {
-            var all = new[]
-            {
-                ApplicationStatus.Applied, ApplicationStatus.Screening, ApplicationStatus.Shortlisted,
-                ApplicationStatus.Interview, ApplicationStatus.Offer, ApplicationStatus.Hired,
-                ApplicationStatus.Rejected, ApplicationStatus.Withdrawn
-            };
-            return all.Select(s => new SelectListItem
+            return AllStatuses.Select(s => new SelectListItem
             {
                 Value = s,
                 Text = ApplicationStatus.Label(s),
                 Selected = s == selected
             }).ToList();
+        }
+
+        // ---- helper phía nhà tuyển dụng ----
+
+        private long? GetEmployerCompanyId()
+        {
+            long userId = CurrentUserId.GetValueOrDefault();
+            return _db.company_members
+                .Where(m => m.user_id == userId)
+                .Select(m => (long?)m.company_id)
+                .FirstOrDefault();
+        }
+
+        // Điều kiện a.jobs.company_id == companyId chính là kiểm tra "đơn thuộc công ty mình"
+        private applications FindEmployerApplication(long id, long companyId, bool withDetails = false)
+        {
+            IQueryable<applications> q = _db.applications;
+            if (withDetails)
+            {
+                q = q.Include(a => a.jobs)
+                     .Include(a => a.cvs)
+                     .Include(a => a.candidates.users);
+            }
+            return q.FirstOrDefault(a => a.id == id && a.jobs.company_id == companyId);
+        }
+
+        private ActionResult RedirectNoCompany()
+        {
+            TempData["Error"] = "Tài khoản của bạn chưa thuộc công ty nào.";
+            return RedirectToAction("Index", "Home");
         }
 
         protected override void Dispose(bool disposing)
