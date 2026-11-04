@@ -66,7 +66,7 @@ namespace recruitment_website.Controllers
         {
             var candidate = GetCurrentCandidate();
             if (candidate == null)
-                return Respond(false, false, "Bạn cần hoàn thiện hồ sơ trước khi lưu tin.", returnUrl);
+                return Respond(false, "Bạn cần hoàn thiện hồ sơ trước khi lưu tin.", returnUrl);
 
             long candidateId = candidate.id;
             var existing = _db.saved_jobs.FirstOrDefault(s => s.candidate_id == candidateId && s.job_id == jobId);
@@ -81,7 +81,7 @@ namespace recruitment_website.Controllers
             {
                 var job = _db.jobs.FirstOrDefault(j => j.id == jobId);
                 if (job == null || job.status != JobStatus.Published)
-                    return Respond(false, false, "Tin tuyển dụng không tồn tại hoặc đã đóng.", returnUrl);
+                    return Respond(false, "Tin tuyển dụng không tồn tại hoặc đã đóng.", returnUrl);
 
                 _db.saved_jobs.Add(new saved_jobs
                 {
@@ -99,17 +99,14 @@ namespace recruitment_website.Controllers
             catch (DbUpdateException)
             {
                 // Bấm đúp: trùng khóa chính (candidate_id, job_id)
-                return Respond(false, !saved, "Không thể cập nhật, vui lòng thử lại.", returnUrl);
+                return Respond(false, "Không thể cập nhật, vui lòng thử lại.", returnUrl);
             }
 
-            return Respond(true, saved, saved ? "Đã lưu tin." : "Đã bỏ lưu tin.", returnUrl);
+            return Respond(true, saved ? "Đã lưu tin." : "Đã bỏ lưu tin.", returnUrl);
         }
 
-        private ActionResult Respond(bool success, bool saved, string message, string returnUrl)
+        private ActionResult Respond(bool success, string message, string returnUrl)
         {
-            if (Request.IsAjaxRequest())
-                return Json(new { success = success, saved = saved, message = message });
-
             if (success) TempData["Success"] = message; else TempData["Error"] = message;
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

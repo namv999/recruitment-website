@@ -66,6 +66,22 @@ namespace recruitment_website.Models.Job
         /// <summary>True nếu người đang xem thuộc công ty đăng tin (được sửa / tạm dừng / đóng).</summary>
         public bool IsOwner { get; set; }
 
+        // ---- Dành cho ứng viên (module C: Ứng tuyển / Lưu tin) ----
+        /// <summary>Đã đăng nhập (bất kể role).</summary>
+        public bool IsLoggedIn { get; set; }
+        /// <summary>Người xem là ứng viên.</summary>
+        public bool IsCandidate { get; set; }
+        /// <summary>Ứng viên đã nộp đơn cho tin này.</summary>
+        public bool HasApplied { get; set; }
+        /// <summary>Id đơn đã nộp (link tới Application/Details), null nếu chưa nộp.</summary>
+        public long? ApplicationId { get; set; }
+        /// <summary>Ứng viên đã lưu tin này.</summary>
+        public bool IsSaved { get; set; }
+        /// <summary>Hồ sơ thiếu SĐT hoặc thành phố.</summary>
+        public bool ProfileIncomplete { get; set; }
+        /// <summary>Ứng viên chưa có CV nào.</summary>
+        public bool HasNoCv { get; set; }
+
         // ---- Hiển thị ----
         public string SalaryText { get { return JobDisplayHelper.Salary(SalaryMin, SalaryMax, Currency); } }
         public string PostedAgo { get { return JobDisplayHelper.PostedAgo(PublishedAt); } }
@@ -76,6 +92,11 @@ namespace recruitment_website.Models.Job
         public string MinEducationLabel { get { return string.IsNullOrEmpty(MinEducation) ? "Không yêu cầu" : EducationLevel.Label(MinEducation); } }
         public string StatusLabel { get { return JobStatus.Label(Status); } }
         public bool IsPublished { get { return Status == JobStatus.Published; } }
+        /// <summary>Tin còn nhận hồ sơ: đã công khai và chưa hết hạn (khớp điều kiện của Application/Apply).</summary>
+        public bool IsOpenForApply
+        {
+            get { return Status == JobStatus.Published && (!ExpiresAt.HasValue || ExpiresAt.Value >= DateTime.Now); }
+        }
 
         public string MinExperienceText
         {

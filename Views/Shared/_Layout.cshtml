@@ -147,11 +147,27 @@
                                                     <span>Lịch sử ứng tuyển</span>
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Index", "SavedJob", new { area = "" })">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                                    </svg>
+                                                    <span>Tin đã lưu</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Skills", "Candidate", new { area = "" })">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                                    </svg>
+                                                    <span>Kỹ năng của tôi</span>
+                                                </a>
+                                            </li>
                                         }
                                         else if (userRole == "employer")
                                         {
                                             <li>
-                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Index", "Job", new { area = "" })">
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("MyJobs", "Job", new { area = "" })">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                         <line x1="8" y1="6" x2="21" y2="6"></line>
                                                         <line x1="8" y1="12" x2="21" y2="12"></line>
@@ -164,7 +180,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("Index", "Application", new { area = "" })">
+                                                <a class="dropdown-item dropdown-item-custom" href="@Url.Action("MyJobs", "Job", new { area = "" })">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                                         <circle cx="9" cy="7" r="4"></circle>

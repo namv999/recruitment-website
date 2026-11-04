@@ -61,6 +61,7 @@
                                 <td class="pe-4">
                                     <div class="job-manage-actions">
                                         <a class="btn btn-outline-secondary btn-sm" href="@Url.Action("Details", "Job", new { id = item.Id })">Xem</a>
+                                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("ByJob", "Application", new { jobId = item.Id })">Hồ sơ ứng viên</a>
 
                                         @if (item.CanEdit)
                                         {

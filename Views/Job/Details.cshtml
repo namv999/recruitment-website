@@ -63,7 +63,51 @@
                         <a class="btn btn-primary btn-sm" href="@Url.Action("Edit", "Job", new { id = Model.Id })">Sửa tin</a>
                     </div>
                 }
-                @* TODO (module C): nút "Ứng tuyển" và "Lưu tin" đặt ở đây, hiển thị cho role candidate *@
+                @if (!Model.IsOwner && Model.IsOpenForApply)
+                {
+                    <div class="d-flex flex-column gap-2 align-items-end">
+                        @if (!Model.IsLoggedIn)
+                        {
+                            <a class="btn btn-primary" href="@Url.Action("Login", "Account", new { returnUrl = Request.Url.PathAndQuery })">Đăng nhập để ứng tuyển</a>
+                        }
+                        else if (Model.IsCandidate)
+                        {
+                            if (Model.HasApplied)
+                            {
+                                <a class="btn btn-outline-success" href="@Url.Action("Details", "Application", new { id = Model.ApplicationId })">✔ Đã ứng tuyển - xem đơn</a>
+                            }
+                            else if (Model.ProfileIncomplete)
+                            {
+                                <a class="btn btn-primary" href="@Url.Action("Edit", "Candidate")">Hoàn thiện hồ sơ để ứng tuyển</a>
+                                <small class="text-muted">Cần có số điện thoại và thành phố.</small>
+                            }
+                            else if (Model.HasNoCv)
+                            {
+                                <a class="btn btn-primary" href="@Url.Action("Cvs", "Candidate")">Tải CV để ứng tuyển</a>
+                                <small class="text-muted">Bạn cần ít nhất 1 CV.</small>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary" href="@Url.Action("Apply", "Application", new { jobId = Model.Id })">Ứng tuyển ngay</a>
+                            }
+
+                            using (Html.BeginForm("Toggle", "SavedJob", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="jobId" value="@Model.Id" />
+                                <input type="hidden" name="returnUrl" value="@Request.Url.PathAndQuery" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                    @(Model.IsSaved ? "★ Bỏ lưu tin" : "☆ Lưu tin")
+                                </button>
+                            }
+                        }
+                        @* Role employer/admin: không hiện nút *@
+                    </div>
+                }
+                else if (!Model.IsOwner && Model.IsCandidate && Model.HasApplied)
+                {
+                    <a class="btn btn-outline-success btn-sm" href="@Url.Action("Details", "Application", new { id = Model.ApplicationId })">✔ Đã ứng tuyển - xem đơn</a>
+                }
             </div>
         </div>
     </div>

@@ -157,6 +157,7 @@ namespace recruitment_website.Services
             if (job == null) return null;
 
             bool isOwner = currentUserId.HasValue
+                && currentUserRole == UserRole.Employer
                 && _db.company_members.Any(m => m.company_id == job.company_id && m.user_id == currentUserId.Value);
             bool isAdmin = currentUserRole == UserRole.Admin;
 
@@ -186,6 +187,34 @@ namespace recruitment_website.Services
                 .ToList();
 
             var company = job.companies;
+
+            // ---- Trạng thái của ứng viên đang xem (module C) ----
+            bool isCandidate = currentUserRole == UserRole.Candidate && currentUserId.HasValue;
+            bool hasApplied = false, isSaved = false, profileIncomplete = false, hasNoCv = false;
+            long? applicationId = null;
+
+            if (isCandidate)
+            {
+                long uid = currentUserId.Value;
+                var cand = _db.candidates.AsNoTracking().FirstOrDefault(cd => cd.user_id == uid);
+                if (cand != null)
+                {
+                    long cid = cand.id;
+                    applicationId = _db.applications
+                        .Where(a => a.job_id == id && a.candidate_id == cid)
+                        .Select(a => (long?)a.id)
+                        .FirstOrDefault();
+                    hasApplied = applicationId.HasValue;
+                    isSaved = _db.saved_jobs.Any(s => s.job_id == id && s.candidate_id == cid);
+                    profileIncomplete = string.IsNullOrWhiteSpace(cand.phone) || string.IsNullOrWhiteSpace(cand.city);
+                    hasNoCv = !_db.cvs.Any(cv => cv.candidate_id == cid);
+                }
+                else
+                {
+                    profileIncomplete = true;
+                    hasNoCv = true;
+                }
+            }
 
             return new JobDetailViewModel
             {
@@ -221,7 +250,14 @@ namespace recruitment_website.Services
                 CompanyWebsite = company.website,
                 CompanyDescription = company.description,
                 CompanyIsVerified = company.is_verified,
-                IsOwner = isOwner
+                IsOwner = isOwner,
+                IsLoggedIn = currentUserId.HasValue,
+                IsCandidate = isCandidate,
+                HasApplied = hasApplied,
+                ApplicationId = applicationId,
+                IsSaved = isSaved,
+                ProfileIncomplete = profileIncomplete,
+                HasNoCv = hasNoCv
             };
         }
 
